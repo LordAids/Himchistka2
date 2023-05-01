@@ -15,5 +15,6 @@ namespace Himchistka.Data
 
         }
         DbSet<Order> Orders { get; set; }
+        DbSet<Client> Clients { get; set; }
     }
 }
