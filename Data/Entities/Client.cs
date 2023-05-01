@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Himchistka.Data.Entities
 {
+    /// <summary>
+    /// Клиент
+    /// </summary>
     public class Client
     {
         [Key]
