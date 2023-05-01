@@ -20,6 +20,6 @@ namespace Himchistka.Data.Entities
 
         [ForeignKey("ClientId")]
         public Client Client { get; set; }
-        public virtual ICollection<OrderServices> OrderServices { get; set; } 
+        public virtual ICollection<Service> Services{ get; set; } 
     }
 }

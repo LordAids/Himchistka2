@@ -3,6 +3,7 @@ using System;
 using Himchistka.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Himchistka.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230501181743_fix manyToMany ")]
+    partial class fixmanyToMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,25 +68,6 @@ namespace Himchistka.Api.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Himchistka.Data.Entities.Place", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Adress")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Places");
-                });
-
             modelBuilder.Entity("Himchistka.Data.Entities.Service", b =>
                 {
                     b.Property<Guid>("ServiceId")
@@ -121,21 +105,6 @@ namespace Himchistka.Api.Migrations
                     b.ToTable("OrderService");
                 });
 
-            modelBuilder.Entity("PlaceService", b =>
-                {
-                    b.Property<Guid>("PlacesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ServicesServiceId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("PlacesId", "ServicesServiceId");
-
-                    b.HasIndex("ServicesServiceId");
-
-                    b.ToTable("PlaceService");
-                });
-
             modelBuilder.Entity("Himchistka.Data.Entities.Order", b =>
                 {
                     b.HasOne("Himchistka.Data.Entities.Client", "Client")
@@ -152,21 +121,6 @@ namespace Himchistka.Api.Migrations
                     b.HasOne("Himchistka.Data.Entities.Order", null)
                         .WithMany()
                         .HasForeignKey("OrdersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Himchistka.Data.Entities.Service", null)
-                        .WithMany()
-                        .HasForeignKey("ServicesServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PlaceService", b =>
-                {
-                    b.HasOne("Himchistka.Data.Entities.Place", null)
-                        .WithMany()
-                        .HasForeignKey("PlacesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

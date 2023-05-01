@@ -8,16 +8,14 @@ using System.Threading.Tasks;
 namespace Himchistka.Data.Entities
 {
     /// <summary>
-    /// Клиент
+    /// Точка химчистки
     /// </summary>
-    public class Client
+    public class Place
     {
         [Key]
         public Guid Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public ICollection<Order> Orders { get; set; }
+        public string Name { get; set; }
+        public string Adress { get; set; }
+        public ICollection<Service> Services { get; set; }
     }
 }

@@ -19,7 +19,8 @@ namespace Himchistka.Data.Entities
         [Range(0, int.MaxValue)]
         public decimal Price { get; set; }
         public string Description { get; set; }
-        public virtual ICollection<OrderServices> OrderServices { get; set; }
+        public virtual ICollection<Order> Orders{ get; set; }
+        public virtual ICollection<Place> Places { get; set; }
 
     }
 }
