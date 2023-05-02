@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Himchistka.Services.DTO;
+using Himchistka.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Himchistka.Api.Controllers
@@ -7,6 +9,12 @@ namespace Himchistka.Api.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
+        private IOrderServices _orderServices;
+        public OrderController(IOrderServices orderServices) 
+        {
+            _orderServices= orderServices;
+        }
+
         [HttpGet("{orderId}")]
         public IActionResult GetOrderById([FromRoute] Guid orderId)
         {
@@ -20,9 +28,12 @@ namespace Himchistka.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpsertOrder()
+        public IActionResult UpsertOrder([FromBody] DTOUpsertOrder model)
         {
-            return Ok();
+            if(ModelState.IsValid)
+                return Ok(_orderServices.UpsertOrder(model));
+
+            return BadRequest();
         }
 
         [HttpDelete("{orderId}")]

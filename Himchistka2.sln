@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Himchistka.Api", "Himchistk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Himchistka.Data", "Data\Himchistka.Data.csproj", "{01C40864-87F1-41F8-8325-A3483C5685D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Himchistka.Services", "Himchistka.Services\Himchistka.Services.csproj", "{FB4DF348-BDFB-46C4-84B1-23B29F569508}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{01C40864-87F1-41F8-8325-A3483C5685D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01C40864-87F1-41F8-8325-A3483C5685D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01C40864-87F1-41F8-8325-A3483C5685D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB4DF348-BDFB-46C4-84B1-23B29F569508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB4DF348-BDFB-46C4-84B1-23B29F569508}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB4DF348-BDFB-46C4-84B1-23B29F569508}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB4DF348-BDFB-46C4-84B1-23B29F569508}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
