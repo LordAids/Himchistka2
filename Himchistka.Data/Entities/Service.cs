@@ -13,7 +13,7 @@ namespace Himchistka.Data.Entities
     public class Service
     {
         [Key]
-        public Guid ServiceId { get; set; }
+        public Guid Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Range(0, int.MaxValue)]

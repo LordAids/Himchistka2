@@ -31,7 +31,7 @@ namespace Himchistka.Services.Services
                 Order order = new Order
                 {
                     ClientId = (Guid)(model.ClientId != null ? model.ClientId : Guid.Empty),
-                    Services = await _context.Services.Where(s => model.Services.Contains(s.ServiceId)).ToListAsync(),
+                    Services = await _context.Services.Where(s => model.Services.Contains(s.Id)).ToListAsync(),
                 };
                 res = _mapper.Map<DTOUpsertOrder>(order);
                 await _context.SaveChangesAsync();
@@ -40,7 +40,7 @@ namespace Himchistka.Services.Services
             {
                 var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == model.Id);
                 order.ClientId = (Guid)(model.ClientId != null ? model.ClientId : Guid.Empty);
-                order.Services = await _context.Services.Where(s => model.Services.Contains(s.ServiceId)).ToListAsync();
+                order.Services = await _context.Services.Where(s => model.Services.Contains(s.Id)).ToListAsync();
                 res = _mapper.Map<DTOUpsertOrder>(order);
             }
             await _context.SaveChangesAsync();

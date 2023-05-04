@@ -9,6 +9,8 @@ namespace Himchistka.Api.Mapper
         public AppMappingProfile() 
         {
             CreateMap<Order, DTOUpsertOrder>().ReverseMap();
+            CreateMap<Service, DTOServices>().ReverseMap();
+            CreateMap<Place, DTOPlace>().ReverseMap();
         }
     }
 }

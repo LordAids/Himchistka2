@@ -9,7 +9,7 @@ namespace Himchistka.Services.DTO
 {
     public class DTOServices
     {
-        public Guid ServiceId { get; set; }
+        public Guid? ServiceId { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }
