@@ -11,5 +11,8 @@ namespace Himchistka.Services.Interfaces
     public interface IOrderServices
     {
         public Task<DTOUpsertOrder> UpsertOrder(DTOUpsertOrder model);
+        public Task<IList<DTOUpsertOrder>> GetAllOrders();
+        public Task<DTOUpsertOrder> GetOrderById(Guid orderId);
+        public Task DeleteOrder(Guid orderId);
     }
 }

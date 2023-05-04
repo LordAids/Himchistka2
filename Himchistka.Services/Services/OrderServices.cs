@@ -47,6 +47,20 @@ namespace Himchistka.Services.Services
             return res;
         }
 
+        public Task<IList<DTOUpsertOrder>> GetAllOrders()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<DTOUpsertOrder> GetOrderById(Guid orderId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteOrder(Guid orderId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
     

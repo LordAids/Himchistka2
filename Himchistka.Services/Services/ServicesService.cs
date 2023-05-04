@@ -1,4 +1,5 @@
-﻿using Himchistka.Services.Interfaces;
+﻿using Himchistka.Services.DTO;
+using Himchistka.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,24 @@ namespace Himchistka.Services.Services
     /// </summary>
     public class ServicesService : IServicesService
     {
+        public Task DeleteService(Guid serviceId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IList<DTOServices>> GetAllServices()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<DTOServices> GetServiceById(Guid serviceId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<DTOServices> UpsertService(DTOServices model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Himchistka.Services.Interfaces;
+﻿using Himchistka.Services.DTO;
+using Himchistka.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,24 @@ namespace Himchistka.Services.Services
     /// </summary>
     public class PlaceService : IPlaceService
     {
+        public Task DeletePlace(Guid placeId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IList<DTOPlace>> GetAllPlaces()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<DTOPlace> GetPlaceById(Guid placeId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<DTOPlace> UpsertPlace(DTOPlace placeModel)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
