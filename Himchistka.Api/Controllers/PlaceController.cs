@@ -20,7 +20,7 @@ namespace Himchistka.Api.Controllers
         [HttpGet("{Id}")]
         public IActionResult Get([FromQuery] Guid id) 
         {
-            
+            return Ok();
         }
     }
 }
