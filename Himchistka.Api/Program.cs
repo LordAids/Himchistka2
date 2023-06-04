@@ -3,6 +3,7 @@ using Himchistka.Data;
 using Himchistka.Data.Entities;
 using Himchistka.Services.Interfaces;
 using Himchistka.Services.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
                 opt.UseNpgsql(connectionString, b => b.MigrationsAssembly("Himchistka.Api")));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // Add services to the container.
 builder.Services.AddScoped<IOrderServices, OrderServices>();
@@ -37,7 +41,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
