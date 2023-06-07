@@ -95,8 +95,12 @@ if (app.Environment.IsDevelopment())
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
     var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
-    DataSeeder.SeedRoles(roleManager).Wait();
+    var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+    var userManager = serviceScope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
 
+
+    DataSeeder.SeedRoles(roleManager).Wait();
+    DataSeeder.SeedSadmin(userManager, context).Wait();
 }
 
 app.UseHttpsRedirection();

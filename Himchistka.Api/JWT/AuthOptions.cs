@@ -15,7 +15,7 @@ namespace Himchistka.Api.JWT
         public const string AUDIENCE = "http://localhost:5000/"; // audience
 
         // TODO: Generate a secret key
-        const string KEY = "supersecretkey";
+        const string KEY = "supersecretkey12312312312";
         /// <summary>
         ///
         /// </summary>

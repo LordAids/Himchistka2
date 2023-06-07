@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Himchistka.Data.Identity;
+using Himchistka.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace Himchistka.Api
 {
@@ -17,6 +19,25 @@ namespace Himchistka.Api
                 var role = new IdentityRole();
                 role.Name = "Employee";
                 IdentityResult roleResult = roleManager.CreateAsync(role).Result;
+            }
+        }
+
+        public static async Task SeedSadmin(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        {
+            if (userManager.FindByNameAsync("sadmin").Result == null)
+            {
+
+                ApplicationUser user = new ApplicationUser
+                {
+                    UserName = "sadmin",
+                    Email = "ktakida@bk.ru",
+                    FullName = "Админ Админович"
+                };
+                IdentityResult result = userManager.CreateAsync(user, "superpassword123!").Result; 
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(user, "Admin").Wait();
+                }
             }
         }
 
