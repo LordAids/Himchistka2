@@ -1,3 +1,4 @@
+using Himchistka.Api;
 using Himchistka.Api.JWT;
 using Himchistka.Api.Mapper;
 using Himchistka.Data;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -89,6 +91,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+    var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+    DataSeeder.SeedRoles(roleManager).Wait();
+
 }
 
 app.UseHttpsRedirection();
