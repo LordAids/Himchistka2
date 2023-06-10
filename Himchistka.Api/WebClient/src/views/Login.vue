@@ -12,14 +12,14 @@
                          <v-text-field
                             v-model="username"
                             name="login"
-                            label="Login"
+                            label="Логин"
                             type="text"
                          ></v-text-field>
                          <v-text-field
                             v-model="password"
                             id="password"
                             name="password"
-                            label="Password"
+                            label="Пароль"
                             type="password"
                          ></v-text-field>
                       </v-form>
@@ -57,6 +57,7 @@ export default {
         axios.post(`http://localhost:8080/api/Account/token`, body)
         .then(response => {
             localStorage.setItem('user', JSON.stringify(response.data));
+            this.$router.push({ name: 'home' })
           })
         .catch(res => {console.log(res)})
     },

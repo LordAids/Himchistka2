@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Login from '../views/Login.vue'
+import Setting from '../views/Settings.vue'
 
 Vue.use(VueRouter)
 
@@ -16,6 +17,12 @@ const routes = [
     name: 'login',
     component: Login
   },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: Setting
+  },
+  { path: '*', redirect: '/' },
 ]
 
 const router = new VueRouter({
