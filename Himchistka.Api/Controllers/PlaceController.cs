@@ -1,6 +1,9 @@
-﻿using Himchistka.Services.Interfaces;
+﻿using Himchistka.Services.DTO;
+using Himchistka.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Himchistka.Api.Controllers
 {
@@ -17,10 +20,30 @@ namespace Himchistka.Api.Controllers
             _placeService = placeService;
         }
 
+        [HttpGet]
+        [Authorize("Admin")]
+        public IActionResult Get()
+        {
+            return Ok();
+        }
+
         [HttpGet("{Id}")]
+        [Authorize("Admin")]
         public IActionResult Get([FromQuery] Guid id) 
         {
             return Ok();
         }
+
+        
+        [HttpPost("CreatePlace")]
+        [Authorize("Admin")]
+        public async Task<IActionResult> CreatePlace(DTOPlace placeModel)
+        {
+            if(ModelState.IsValid)
+                await _placeService.UpsertPlace(placeModel);
+
+            return Ok();
+        }
+
     }
 }
