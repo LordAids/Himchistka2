@@ -31,8 +31,11 @@ namespace Himchistka.Services.Services
             try
             {
                 var place = await _context.Places.FirstOrDefaultAsync();
-                if(place != null) 
-                    _context.Places.Remove(place) ; 
+                if(place != null)
+                {
+                    _context.Places.Remove(place);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (Exception ex) { }
         }

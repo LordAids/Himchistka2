@@ -54,13 +54,14 @@ export default {
           userName: this.username,
           password: this.password
         }
-        axios.post(`http://localhost:8080/api/Account/token`, body)
+        axios.post(`http://localhost:8000/api/Account/token`, body)
         .then(response => {
             localStorage.setItem('user', JSON.stringify(response.data));
             this.$router.push({ name: 'home' })
           })
         .catch(res => {console.log(res)})
     },
-    }
+    },
+    
 };
 </script>

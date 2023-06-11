@@ -35,9 +35,15 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = true;
 });
 
+
+
 builder.Services.AddCors();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
     {
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
@@ -75,7 +81,7 @@ var app = builder.Build();
 
 
 app.UseCors(x => x
-        .AllowCredentials()
+        .AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader());
 

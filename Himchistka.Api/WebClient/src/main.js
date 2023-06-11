@@ -8,6 +8,13 @@ import axios from 'axios'
 Vue.config.productionTip = false
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS, DELETE, PUT';
+axios.defaults.headers.common['Access-Control-Allow-Headers'] = '*';
+
+if(localStorage.getItem('user')){
+  axios.defaults.headers.common['Authorization'] = 'Bearer ' + JSON.parse(localStorage.getItem('user')).access_token;
+}
+
 new Vue({
   router,
   store,

@@ -21,28 +21,40 @@ namespace Himchistka.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize("Admin")]
-        public IActionResult Get()
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Get()
         {
-            return Ok();
+            return Ok(await _placeService.GetAllPlaces());
         }
 
         [HttpGet("{Id}")]
-        [Authorize("Admin")]
-        public IActionResult Get([FromQuery] Guid id) 
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Get([FromQuery] Guid Id) 
         {
-            return Ok();
+            return Ok(await _placeService.GetPlaceById(Id));
         }
 
         
         [HttpPost("CreatePlace")]
-        [Authorize("Admin")]
-        public async Task<IActionResult> CreatePlace(DTOPlace placeModel)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreatePlace([FromBody]DTOPlace placeModel)
         {
             if(ModelState.IsValid)
-                await _placeService.UpsertPlace(placeModel);
+                return Ok(await _placeService.UpsertPlace(placeModel));
 
-            return Ok();
+            return BadRequest();
+        }
+
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeletePlace([FromQuery] Guid Id)
+        {
+            if (Guid.Empty != Id)
+            {
+                await _placeService.DeletePlace(Id);
+                return Ok();
+            }
+            return BadRequest();
         }
 
     }
