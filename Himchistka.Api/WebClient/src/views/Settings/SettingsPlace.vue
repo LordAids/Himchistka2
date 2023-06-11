@@ -47,14 +47,12 @@
                 <v-card-text>
                     <v-container tag="section" py-3 fluid grid-list-md>
                         <v-form :lazy-validation="true">
-                            <v-fieldset>
                                 <v-text-field
                                         label="Название предприятия"
                                     ></v-text-field>   
                                     <v-text-field
                                         label="Адрес"
-                                    ></v-text-field>            
-                            </v-fieldset>
+                                    ></v-text-field>    
                         </v-form>
                         
                     </v-container>
