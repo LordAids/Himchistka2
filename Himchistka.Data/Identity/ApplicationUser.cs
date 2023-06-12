@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Himchistka.Data.Entities;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Himchistka.Data.Identity
     public class ApplicationUser : IdentityUser
     {
         public string FullName { get; set; } 
+        public ICollection<Place> Places { get; set;}
     }
 }

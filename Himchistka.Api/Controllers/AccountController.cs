@@ -10,6 +10,7 @@ using Himchistka.Api.DTO;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Himchistka.Api.JWT;
+using Microsoft.EntityFrameworkCore;
 
 namespace Himchistka.Api.Controllers
 {
@@ -93,20 +94,62 @@ namespace Himchistka.Api.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("CreateEmployee")]
         public async Task<IActionResult> CreateEmployee([FromBody] RegisterViewModel model)
         {
             if(!ModelState.IsValid) return BadRequest();
 
+            if(model.Id != null)
+            {
+                var userPlaces = await _context.Places.Where(p => model.Places.Contains(p.Id)).ToListAsync();
+
+                var user = _context.ApplicationUsers.FirstOrDefault(u => u.Id == model.Id);
+                if(user != null)
+                {
+                    user.PhoneNumber = model.PhoneNumber;
+                    user.Email = model.Email;
+                    user.FullName = model.FullName;
+                    user.Places = userPlaces;
+                }
+                return Ok();
+            }
+            
+            var newUserPlaces = await _context.Places.Where(p => model.Places.Contains(p.Id)).ToListAsync();
+
             ApplicationUser newUser = new ApplicationUser()
             {
                 Email = model.Email,
                 UserName = model.Username,
-                PhoneNumber = model.Phone,
-                FullName = model.FullName
+                PhoneNumber = model.PhoneNumber,
+                FullName = model.FullName,
+                Places = newUserPlaces
             };
             await _userManager.CreateAsync(newUser, model.Password);
             await _userManager.AddToRoleAsync(newUser, "Employee");
+            return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetEmployee")]
+        public async Task<IActionResult> GetEmployee()
+        {
+            var employee = _context.ApplicationUsers.Include(p => p.Places).Where(a => a.UserName != "sadmin").ToList();
+            foreach (var em in employee)
+                foreach (var places in em.Places)
+                    places.Employee = new List<ApplicationUser>();
+
+            return Ok(employee);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteEmployee([FromQuery] Guid Id)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == Id.ToString());
+            if(user != null) 
+                await _userManager.DeleteAsync(user);
+
             return Ok();
         }
 
