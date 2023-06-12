@@ -1,4 +1,5 @@
-﻿using Himchistka.Data.Entities;
+﻿using Himchistka.Data.Connections;
+using Himchistka.Data.Entities;
 using Himchistka.Data.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ namespace Himchistka.Data
         public DbSet<Service> Services { get; set; }
         public DbSet<Place> Places { get; set; }
         public DbSet<Spending> Spendings { get; set; }
+        public DbSet<SpendingServices> SpendingServices { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     }
 }

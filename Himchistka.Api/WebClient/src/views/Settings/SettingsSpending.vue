@@ -72,6 +72,7 @@
                                       label="Название ед. измерения"
                                   ></v-text-field>
                                   <v-text-field
+                                      type="number"
                                       v-model="form.price"
                                       label="Стоимость одной единицы (руб)"
                                   ></v-text-field>     

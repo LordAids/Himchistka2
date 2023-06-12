@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Himchistka.Data.Connections;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace Himchistka.Data.Entities
         public string Description { get; set; }
         public virtual ICollection<Order> Orders{ get; set; }
         public virtual ICollection<Place> Places { get; set; }
+        public virtual List<SpendingServices> Spendings { get; set; }
 
     }
 }

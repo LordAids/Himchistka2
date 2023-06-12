@@ -2,7 +2,7 @@
     <section>
         <v-toolbar>
             <v-toolbar-title>
-                <h4>Настройки сотрудников</h4>
+                <h4>Заказы</h4>
             </v-toolbar-title>
             <v-spacer></v-spacer>
         </v-toolbar>
@@ -11,7 +11,7 @@
                 <v-flex lg12 hidden-sm-and-down>
                     <v-data-table
                     :headers="headers"
-                    :items="Employers"
+                    :items="PlaceItems"
                     :loading="loading"
                     loading-text="Загрузка данных"
                     :items-per-page="5"
@@ -64,38 +64,18 @@
                     <v-container tag="section" py-3 fluid grid-list-md>
                         <v-form :lazy-validation="true">
                                 <v-text-field
-                                        v-model="form.fullName"
-                                        label="ФИО"
+                                        v-model="form.name"
+                                        label="Название"
                                     ></v-text-field>   
                                     <v-text-field
-                                        v-model="form.email"
-                                        label="Email"
+                                        v-model="form.unitName"
+                                        label="Название ед. измерения"
                                     ></v-text-field>
                                     <v-text-field
-                                        v-model="form.phoneNumber"
-                                        label="Номер телефона"
-                                        type="tel"
-                                        prefix="+"
-                                        mask="7##########"
-                                    ></v-text-field> 
-                                    <v-text-field v-if="addForm"
-                                        v-model="form.username"
-                                        label="Логин"
-                                    ></v-text-field>      
-                                    <v-text-field v-if="addForm"
-                                        v-model="form.password"
-                                        label="Пароль"
-                                    ></v-text-field>  
-                                    <v-select
-                                        v-model="form.places"
-                                        :items="PlaceItems"
-                                        label="Места работы"
-                                        multiple
-                                        item-value="id"
-                                        item-text="name"
-                                        >
-                                        
-                                    </v-select>
+                                        type="number"
+                                        v-model="form.price"
+                                        label="Стоимость одной единицы (руб)"
+                                    ></v-text-field>     
                         </v-form>
                         
                     </v-container>
@@ -109,7 +89,7 @@
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="700px">
           <v-card>
-            <v-card-title class="text-h6">Вы уверены, что хотите удалить данного сотрудника?</v-card-title>
+            <v-card-title class="text-h6">Вы уверены, что хотите удалить данную статью расходов?</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="this.dialogDelete = false, this.deleteItemId = null">Отмена</v-btn>
@@ -134,7 +114,6 @@
   data(){
     return{
         PlaceItems: [],
-        Employers: [],
         ItemDialog: false,
         dialogDelete: false,
         loading: true,
@@ -142,12 +121,9 @@
         addForm: true,
         form: {
             id: null,
-            fullName: '',
-            email:'',
-            phoneNumber: '',
-            userName: '',
-            password: '',
-            places: []
+            name: '',
+            unitName:'',
+            price: ''
         }
     }
   },
@@ -155,25 +131,20 @@
       headers () {
         return [
           {
-            text: 'ФИО',
+            text: 'Имя',
             align: 'start',
             sortable: false,
-            value: 'fullName',
+            value: 'name',
           },
           {
-            text: 'Email',
+            text: 'Ед. измерений',
             sortable: false,
-            value: 'email',
+            value: 'unitName',
           },
           {
-            text: 'Номер телефона',
+            text: 'Стоимость (руб)',
             sortable: false,
-            value: 'phoneNumber',
-          },
-          {
-            text: 'Логин',
-            sortable: false,
-            value: 'normalizedUserName',
+            value: 'price',
           },
        { text: 'Действия', value: 'actions', sortable: false  },
         ]
@@ -181,26 +152,22 @@
     },
   methods: {
     addItem(){
-        axios.post('http://localhost:8000/api/Account/CreateEmployee',this.form)
+        axios.post('http://localhost:8000/api/Spending/CreateSpending',this.form)
         .then(res => {
             this.ItemDialog = false,
-            this.form.fullName = '',
-            this.form.email = ''
-            this.form.phoneNumber = ''
-            this.form.userName = ''
-            this.form.password = ''
+            this.form.name = '',
+            this.form.unitName = ''
+            this.form.price = ''
             this.form.id = null
             console.log(res.body)
             this.getItems();
         })
     },
     editItem(item){
-        this.form.fullName = item.fullName
-        this.form.email = item.email
-        this.form.phoneNumber= item.phoneNumber
-        this.form.userName= item.userName
-        this.form.password= item.password
-        this.form.places= item.places.map(e => e.id)
+        console.log(item)
+        this.form.name = item.name
+        this.form.unitName = item.unitName
+        this.form.price= item.price
         this.form.id = item.id
         this.ItemDialog = true
     },
@@ -209,7 +176,7 @@
         this.dialogDelete = true
     },
     deleteItemConfirm(){
-        axios.delete(`http://localhost:8000/api/Account?Id=${this.deleteItemId}`)
+        axios.delete(`http://localhost:8000/api/Spending?Id=${this.deleteItemId}`)
         .then(res => {
             console.log(res)
             this.deleteItemId = null
@@ -219,23 +186,16 @@
     },
     getItems(){
       this.loading = true
-      axios.get(`http://localhost:8000/api/Account/GetEmployee`)
+      axios.get(`http://localhost:8000/api/Spending`)
       .then(res => {
-        console.log(res)
-        this.Employers = res.data
-        this.loading = false
-      })
-    },
-    getPlaces(){
-        axios.get(`http://localhost:8000/api/Places`)
-        .then(res => {
         this.PlaceItems = res.data
+        console.log(this.PlaceItems)
+        this.loading = false
       })
     }
   },
   created() {
     this.getItems();
-    this.getPlaces();
   }
   }
   

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Login from '../views/Login.vue'
 import Setting from '../views/Settings.vue'
+import Orders from '../views/Orders.vue'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: Setting
+  },
+  {
+    path: '/orders',
+    name: 'orders',
+    component: Orders
   },
   { path: '*', redirect: '/' },
 ]
