@@ -11,10 +11,10 @@
                 <v-flex lg12 hidden-sm-and-down>
                     <v-data-table
                     :headers="headers"
-                    :items="PlaceItems"
+                    :items="Orders"
                     :loading="loading"
                     loading-text="Загрузка данных"
-                    :items-per-page="5"
+                    :items-per-page="15"
                     class="elevation-1"
                     >
                     <template v-slot:top>
@@ -63,19 +63,36 @@
                 <v-card-text>
                     <v-container tag="section" py-3 fluid grid-list-md>
                         <v-form :lazy-validation="true">
-                                <v-text-field
-                                        v-model="form.name"
-                                        label="Название"
-                                    ></v-text-field>   
+                                    <v-btn
+                                    @click="newClientForm = true"
+                                    >
+                                    Новый клиент?
+                                    </v-btn>
+                                    <v-autocomplete
+                                       v-model="form.clientId"
+                                       :items="Clients"
+                                       label="Клиент"
+                                       item-value="id"
+                                       item-text="selectName"
+                                       >
+                                    </v-autocomplete>
+                                    <v-select
+                                       v-model="form.services"
+                                       multiple
+                                       :items="Services"
+                                       label="Услуги"
+                                       item-value="id"
+                                       item-text="name"
+                                       @change="changeCoast"
+                                       >
+                                    </v-select> 
                                     <v-text-field
-                                        v-model="form.unitName"
-                                        label="Название ед. измерения"
-                                    ></v-text-field>
-                                    <v-text-field
-                                        type="number"
-                                        v-model="form.price"
-                                        label="Стоимость одной единицы (руб)"
-                                    ></v-text-field>     
+                                        v-model="form.comment"
+                                        label="Комментарий"
+                                    ></v-text-field> 
+                                    <div class="body-1">
+                                        Итогвая цена: {{ form.Cost }} рублей
+                                    </div>
                         </v-form>
                         
                     </v-container>
@@ -89,7 +106,7 @@
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="700px">
           <v-card>
-            <v-card-title class="text-h6">Вы уверены, что хотите удалить данную статью расходов?</v-card-title>
+            <v-card-title class="text-h6">Вы уверены, что хотите удалить данный заказ?</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="this.dialogDelete = false, this.deleteItemId = null">Отмена</v-btn>
@@ -97,6 +114,56 @@
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
+        </v-dialog>
+        <v-dialog v-model="newClientForm" max-width="500px" :persistent="true">
+            <v-card class="pb-4">
+                <v-toolbar>
+                    <v-toolbar-title>
+                        <h4>Добавить клиента</h4>
+                        <v-spacer></v-spacer>
+                    </v-toolbar-title>
+                </v-toolbar>
+                <v-card-text>
+                    <v-container tag="section" py-3 fluid grid-list-md>
+                        <v-form :lazy-validation="true">
+                            <v-text-field
+                                v-model="clientForm.firstName"
+                                label="Имя"
+                            ></v-text-field>
+                            <v-text-field
+                                v-model="clientForm.lastName"
+                                label="Фамилия"
+                            ></v-text-field>
+                            <v-text-field
+                                v-model="clientForm.email"
+                                label="Email"
+                            ></v-text-field>
+                            <v-text-field
+                                v-model="clientForm.phoneNumber"
+                                label="Номер телефона"
+                                type="tel"
+                                prefix="+"
+                                mask="7##########"
+                            ></v-text-field>
+                            <v-banner
+                            color="primary"
+                            outlined
+                            >
+                            Дата рождения
+                            </v-banner>
+                            <v-date-picker
+                                v-model="clientForm.birthday"
+                                color="primary"
+                            ></v-date-picker>
+                        </v-form>
+                    </v-container>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn rounded @click="newClientForm = false" color="secondary">Отмена</v-btn>
+                    <v-btn rounded color="primary" @click="addClient">Добавить</v-btn>
+                </v-card-actions>
+  
+            </v-card>
         </v-dialog>
     </section>
   </template>
@@ -113,17 +180,28 @@
   export default {
   data(){
     return{
-        PlaceItems: [],
+        Places: [],
+        Orders: [],
+        Services: [],
+        Clients: [],
         ItemDialog: false,
         dialogDelete: false,
+        newClientForm: false,
         loading: true,
         deleteItemId: null,
         addForm: true,
         form: {
             id: null,
-            name: '',
-            unitName:'',
-            price: ''
+            clientId: null,
+            services: [],
+            Cost: 0
+        },
+        clientForm: {
+            firstName : '',
+            lastName : '',
+            email : '',
+            phoneNumber : '',
+            birthday: null
         }
     }
   },
@@ -131,20 +209,25 @@
       headers () {
         return [
           {
-            text: 'Имя',
+            text: 'Клиент',
             align: 'start',
             sortable: false,
-            value: 'name',
+            value: 'clientName',
           },
           {
-            text: 'Ед. измерений',
+            text: 'Комментарий',
             sortable: false,
-            value: 'unitName',
+            value: 'comment',
           },
           {
             text: 'Стоимость (руб)',
             sortable: false,
-            value: 'price',
+            value: 'cost',
+          },
+          {
+            text: 'Статус',
+            sortable: false,
+            value: 'status',
           },
        { text: 'Действия', value: 'actions', sortable: false  },
         ]
@@ -152,15 +235,29 @@
     },
   methods: {
     addItem(){
-        axios.post('http://localhost:8000/api/Spending/CreateSpending',this.form)
+        debugger
+        axios.post('http://localhost:8000/api/Orders/CreateOrder',this.form)
         .then(res => {
+            this.form.id = null,
+            this.form.clientId = null,
+            this.form.services = [],
+            this.form.Cost = 0,
             this.ItemDialog = false,
-            this.form.name = '',
-            this.form.unitName = ''
-            this.form.price = ''
-            this.form.id = null
             console.log(res.body)
             this.getItems();
+        })
+    },
+    addClient(){
+        axios.post('http://localhost:8000/api/Client/CreateClient',this.clientForm)
+        .then(res => {
+            this.newClientForm = false,
+            this.clientForm.firstName = '',
+            this.clientForm.lastName = '',
+            this.clientForm.email = '',
+            this.clientForm.phoneNumber = '',
+            this.clientForm.birthday = null
+            console.log(res.body)
+            this.getClients();
         })
     },
     editItem(item){
@@ -186,16 +283,49 @@
     },
     getItems(){
       this.loading = true
-      axios.get(`http://localhost:8000/api/Spending`)
+      axios.get(`http://localhost:8000/api/Orders`)
       .then(res => {
-        this.PlaceItems = res.data
-        console.log(this.PlaceItems)
+        this.Orders = res.data.result
         this.loading = false
       })
+    },
+    getPlaces(){
+        axios.get(`http://localhost:8000/api/Places`)
+        .then(res => {
+            this.Places = res.data
+        })
+    },
+    getServices(){
+        axios.get(`http://localhost:8000/api/Services`)
+        .then(res => {
+        this.Services = res.data
+        })
+    },
+    getClients(){
+        axios.get(`http://localhost:8000/api/Client`)
+        .then(res => {
+        this.Clients = res.data.result
+        console.log(this.Clients)
+        })
+    },
+    changeCoast(){
+        console.log(this.form.services)
+        this.form.Cost = 0
+        let selectedServices = []
+        this.form.services.forEach(element => {
+            let serv = this.Services.find(s => s.id == element)
+            selectedServices.push(serv)
+            this.form.Cost = serv.price + this.form.Cost
+        });
+        
+        debugger
     }
   },
   created() {
     this.getItems();
+    this.getPlaces();
+    this.getServices();
+    this.getClients();
   }
   }
   

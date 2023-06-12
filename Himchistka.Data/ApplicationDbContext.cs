@@ -15,7 +15,7 @@ namespace Himchistka.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Client> Clients { get; set; }

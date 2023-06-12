@@ -55,17 +55,17 @@ namespace Himchistka.Services.Services
 
             List<SpendingServices> spendings = new List<SpendingServices>();
             
-            if (model.ServiceId == null)
+            if (model.Id == null)
             {
                 service = _mapper.Map<Service>(model);
                 service.Places = places;
                 _context.Services.Add(service);
                 await _context.SaveChangesAsync();
-                model.ServiceId = service.Id;
+                model.Id = service.Id;
             }
             else
             {
-                service = _context.Services.FirstOrDefault(s => s.Id == model.ServiceId);
+                service = _context.Services.FirstOrDefault(s => s.Id == model.Id);
                 if(service == null)
                 {
                     service.Places = places;

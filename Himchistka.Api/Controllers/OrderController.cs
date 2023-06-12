@@ -1,5 +1,6 @@
 ﻿using Himchistka.Services.DTO;
 using Himchistka.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,30 +16,35 @@ namespace Himchistka.Api.Controllers
             _orderServices= orderServices;
         }
 
+        [Authorize]
         [HttpGet("{orderId}")]
         public IActionResult GetOrderById([FromRoute] Guid orderId)
         {
-            return Ok();
+            return Ok(_orderServices.GetOrderById(orderId));
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetOrders()
         {
-            return Ok();
+            return Ok(_orderServices.GetAllOrders());
         }
 
-        [HttpPost]
-        public IActionResult UpsertOrder([FromBody] DTOUpsertOrder model)
+        [Authorize]
+        [HttpPost("CreateOrder")]
+        public async Task<IActionResult> UpsertOrder([FromBody] DTOOrders model)
         {
             if(ModelState.IsValid)
-                return Ok(_orderServices.UpsertOrder(model));
+                return Ok(await _orderServices.UpsertOrder(model));
 
             return BadRequest();
         }
 
+        [Authorize]
         [HttpDelete("{orderId}")]
         public IActionResult DeleteOrder([FromRoute] Guid orderId) 
         {
+            _orderServices.DeleteOrder(orderId);
             return Ok();
         }
     }

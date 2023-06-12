@@ -16,51 +16,90 @@ namespace Himchistka.Services.Services
     public class OrderServices : IOrderServices
     {
         private ApplicationDbContext _context;
+        private IClientService _clientService;
         private readonly IMapper _mapper;
-        public OrderServices(IConfiguration configuration, ApplicationDbContext db, IMapper mapper)
+        public OrderServices(IConfiguration configuration, ApplicationDbContext db, IMapper mapper, IClientService clientService)
         {
             _context = db;
             _mapper = mapper;
+            _clientService = clientService;
         }
 
-        public async Task<DTOUpsertOrder> UpsertOrder(DTOUpsertOrder model)
+        public async Task<DTOOrders> UpsertOrder(DTOOrders model)
         {
-            DTOUpsertOrder res = new();
+            DTOOrders res = new();
             if (model.Id == null)
             {
                 Order order = new Order
                 {
                     ClientId = (Guid)(model.ClientId != null ? model.ClientId : Guid.Empty),
                     Services = await _context.Services.Where(s => model.Services.Contains(s.Id)).ToListAsync(),
+                    Cost = (decimal)model.Cost,
+                    Comment = model.Comment,
+                    Status = (int)OrderStatus.New
                 };
-                res = _mapper.Map<DTOUpsertOrder>(order);
+
+                _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
+                res = _mapper.Map<DTOOrders>(order);
+
             }
             else
             {
                 var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == model.Id);
                 order.ClientId = (Guid)(model.ClientId != null ? model.ClientId : Guid.Empty);
                 order.Services = await _context.Services.Where(s => model.Services.Contains(s.Id)).ToListAsync();
-                res = _mapper.Map<DTOUpsertOrder>(order);
+                res = _mapper.Map<DTOOrders>(order);
             }
             await _context.SaveChangesAsync();
             return res;
         }
 
-        public Task<IList<DTOUpsertOrder>> GetAllOrders()
+        public async Task<IList<DTOOrders>> GetAllOrders()
         {
-            throw new NotImplementedException();
+            var orders = _context.Orders.AsNoTracking()
+                                        .Include(c => c.Client)
+                                        .Include(c => c.Services)
+                                        .ToList();
+
+            var res = new List<DTOOrders>();
+            foreach (var order in orders)
+            {
+                res.Add(new DTOOrders()
+                {
+                    ClientId = order.ClientId,
+                    Services = order.Services.Select(o => o.Id).ToList(),
+                    Comment = order.Comment,
+                    Cost = order.Cost,
+                    Status = order.Status,
+                    ClientName = order.Client.FirstName + " " + order.Client.LastName
+                });
+            }
+
+            return _mapper.Map<List<DTOOrders>>(res);
+
         }
 
-        public Task<DTOUpsertOrder> GetOrderById(Guid orderId)
+        public async Task<DTOOrders> GetOrderById(Guid orderId)
         {
-            throw new NotImplementedException();
+            return _mapper.Map<DTOOrders>(await _context.Orders.FirstOrDefaultAsync(p => p.Id == orderId));
+
         }
 
-        public Task DeleteOrder(Guid orderId)
+        public async Task DeleteOrder(Guid orderId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var Order = await _context.Orders.FirstOrDefaultAsync(p => p.Id == orderId);
+                if (Order != null)
+                {
+                    _context.Orders.Remove(Order);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex) { }
         }
+
     }
 }
     

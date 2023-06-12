@@ -30,7 +30,7 @@ namespace Himchistka.Services.Services
         {
             try
             {
-                var place = await _context.Places.FirstOrDefaultAsync();
+                var place = await _context.Places.FirstOrDefaultAsync(p => p.Id == placeId);
                 if(place != null)
                 {
                     _context.Places.Remove(place);

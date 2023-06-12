@@ -8,10 +8,14 @@ using System.Threading.Tasks;
 
 namespace Himchistka.Services.DTO
 {
-    public class DTOUpsertOrder
+    public class DTOOrders
     {
         public Guid? Id { get; set; }
         public Guid? ClientId { get; set; }
+        public string? ClientName { get; set; }
+        public int? Status { get; set; }
+        public decimal? Cost { get; set; }   
+        public string Comment { get; set; }
         public List<Guid>? Services { get;set; }
     }
 }

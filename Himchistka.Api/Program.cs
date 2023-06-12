@@ -70,6 +70,7 @@ builder.Services.AddScoped<IOrderServices, OrderServices>();
 builder.Services.AddScoped<IPlaceService, PlaceService>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
 builder.Services.AddScoped<ISpendingService, SpendingService>();
+builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<DbContext, ApplicationDbContext>();
 
 
