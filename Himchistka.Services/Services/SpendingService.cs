@@ -38,7 +38,7 @@ namespace Himchistka.Services.Services
         public async Task<DTOSpending> UpsertSpending(DTOSpending model)
         {
             DTOSpending res = new();
-            if (model.Price == null)
+            if (model.Id == null)
             {
                 res = _mapper.Map<DTOSpending>(await _context.Spendings.AddAsync(_mapper.Map<Spending>(model)));
             }
