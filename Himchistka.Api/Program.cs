@@ -69,6 +69,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IOrderServices, OrderServices>();
 builder.Services.AddScoped<IPlaceService, PlaceService>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
+builder.Services.AddScoped<ISpendingService, SpendingService>();
 builder.Services.AddScoped<DbContext, ApplicationDbContext>();
 
 

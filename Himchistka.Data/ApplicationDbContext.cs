@@ -20,6 +20,7 @@ namespace Himchistka.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Place> Places { get; set; }
+        public DbSet<Spending> Spendings { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace Himchistka.Api.Mapper
             CreateMap<Order, DTOUpsertOrder>().ReverseMap();
             CreateMap<Service, DTOServices>().ReverseMap();
             CreateMap<Place, DTOPlace>().ReverseMap();
+            CreateMap<Spending, DTOSpending>().ReverseMap();
         }
     }
 }
