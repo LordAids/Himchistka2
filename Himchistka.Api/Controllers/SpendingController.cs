@@ -34,9 +34,9 @@ namespace Himchistka.Api.Controllers
         }
 
 
-        [HttpPost("CreatePlace")]
+        [HttpPost("CreateSpending")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreatePlace([FromBody] DTOSpending placeModel)
+        public async Task<IActionResult> CreateSpending([FromBody] DTOSpending placeModel)
         {
             if (ModelState.IsValid)
                 return Ok(await _spendingService.UpsertSpending(placeModel));

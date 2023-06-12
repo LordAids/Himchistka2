@@ -11,7 +11,7 @@
             <v-tab-item :key="1" ><SettingsPlace/></v-tab-item>
             <v-tab-item :key="2" ><SettingsEmployee/></v-tab-item>
             <v-tab-item :key="3" ><SettingsServices/></v-tab-item>
-            <v-tab-item :key="4" ><SettingsServices/></v-tab-item>
+            <v-tab-item :key="4" ><SettingsSpending/></v-tab-item>
         </v-tabs-items>
         
     </v-card>
@@ -29,8 +29,9 @@ export default {
     SettingsEmployee,
     SettingsPlace,
     SettingsServices,
+    SettingsSpending,
     SettingsSpending
-  },
+},
   
   data(){
     return{

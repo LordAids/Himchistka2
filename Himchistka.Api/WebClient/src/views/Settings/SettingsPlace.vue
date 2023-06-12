@@ -12,7 +12,8 @@
                     <v-data-table
                     :headers="headers"
                     :items="PlaceItems"
-                    
+                    :loading="loading"
+                    loading-text="Загрузка данных"
                     :items-per-page="5"
                     class="elevation-1"
                     >
@@ -110,6 +111,7 @@ export default {
         PlaceItems: [],
         ItemDialog: false,
         dialogDelete: false,
+        loading: true,
         deleteItemId: null,
         addForm: true,
         form: {
@@ -174,10 +176,12 @@ export default {
         })
     },
     getItems(){
+      this.loading = true
       axios.get(`http://localhost:8000/api/Places`)
       .then(res => {
         this.PlaceItems = res.data
         console.log(this.PlaceItems)
+        this.loading = false
       })
     }
   },

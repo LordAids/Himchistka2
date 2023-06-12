@@ -40,14 +40,19 @@ namespace Himchistka.Services.Services
             DTOSpending res = new();
             if (model.Id == null)
             {
-                res = _mapper.Map<DTOSpending>(await _context.Spendings.AddAsync(_mapper.Map<Spending>(model)));
+                Spending spending = _mapper.Map<Spending>(model);
+                _context.Spendings.Add(spending);
+                await _context.SaveChangesAsync();
+                model.Id = spending.Id;
             }
             else
             {
-                var service = _context.Spendings.FirstOrDefault(s => s.Id == model.Id);
-                service = _mapper.Map<Spending>(model);
-                res = _mapper.Map<DTOSpending>(service);
-                _context.Spendings.Update(service);
+                var spending = await _context.Spendings.FirstOrDefaultAsync(p => p.Id == model.Id);
+                spending.Name = model.Name;
+                spending.UnitName = model.UnitName;
+                spending.Price = model.Price;
+                _context.Spendings.Update(spending);
+                await _context.SaveChangesAsync();
             }
             await _context.SaveChangesAsync();
             return res;
