@@ -25,9 +25,9 @@ namespace Himchistka.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult GetOrders()
+        public IActionResult GetOrders([FromQuery]Guid placeId)
         {
-            return Ok(_orderServices.GetAllOrders());
+            return Ok(_orderServices.GetAllOrders(placeId));
         }
 
         [Authorize]

@@ -18,15 +18,29 @@
                     class="elevation-1"
                     >
                     <template v-slot:top>
-                            <v-toolbar flat>
-                                <v-btn
-                                    color="primary"
-                                    dark
-                                    class="mb-2"
-                                    @click="ItemDialog = true, addForm = true"
-                                    >
-                                    Добавить
+                            <v-toolbar flat max-width="600px">
+                                <v-flex  class="d-flex pa-2" >
+                                    <v-btn xs3
+                                        color="primary"
+                                        dark
+                                        class="mb-2  ma-2"
+                                        @click="ItemDialog = true, addForm = true"
+                                        >
+                                        Добавить
                                     </v-btn>
+                                    <v-select xs3
+                                        v-model="selectedPlace"
+                                        :items="Places"
+                                        label="Предприятие"
+                                        item-value="id"
+                                        item-text="name"
+                                        @change="getItems"
+                                        >
+
+                                    </v-select>
+                                    
+                                </v-flex>
+                                
                             </v-toolbar>
                         </template>
                         <template v-slot:item.actions="{ item }">
@@ -184,6 +198,7 @@
         Orders: [],
         Services: [],
         Clients: [],
+        selectedPlace: [],
         ItemDialog: false,
         dialogDelete: false,
         newClientForm: false,
@@ -194,7 +209,8 @@
             id: null,
             clientId: null,
             services: [],
-            Cost: 0
+            Cost: 0,
+            placeId: null,
         },
         clientForm: {
             firstName : '',
@@ -236,12 +252,14 @@
   methods: {
     addItem(){
         debugger
+        this.form.placeId = this.selectedPlace
         axios.post('http://localhost:8000/api/Orders/CreateOrder',this.form)
         .then(res => {
             this.form.id = null,
             this.form.clientId = null,
             this.form.services = [],
             this.form.Cost = 0,
+            this.form.placeId = 0;
             this.ItemDialog = false,
             console.log(res.body)
             this.getItems();
@@ -283,7 +301,10 @@
     },
     getItems(){
       this.loading = true
-      axios.get(`http://localhost:8000/api/Orders`)
+      let body = {
+        placeId: this.selectedPlace
+      }
+      axios.get(`http://localhost:8000/api/Orders?placeId=${this.selectedPlace}`, body)
       .then(res => {
         this.Orders = res.data.result
         this.loading = false

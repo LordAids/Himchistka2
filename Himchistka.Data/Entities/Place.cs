@@ -18,6 +18,7 @@ namespace Himchistka.Data.Entities
         public string Name { get; set; }
         public string Adress { get; set; }
         public ICollection<Service> Services { get; set; }
+        public ICollection<Order> Orders { get; set; }
         public ICollection<ApplicationUser> Employee { get; set; }
     }
 }

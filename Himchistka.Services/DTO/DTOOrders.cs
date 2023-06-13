@@ -12,6 +12,7 @@ namespace Himchistka.Services.DTO
     {
         public Guid? Id { get; set; }
         public Guid? ClientId { get; set; }
+        public Guid? PlaceId { get; set; }
         public string? ClientName { get; set; }
         public int? Status { get; set; }
         public decimal? Cost { get; set; }   

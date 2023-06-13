@@ -34,6 +34,7 @@ namespace Himchistka.Services.Services
                 {
                     ClientId = (Guid)(model.ClientId != null ? model.ClientId : Guid.Empty),
                     Services = await _context.Services.Where(s => model.Services.Contains(s.Id)).ToListAsync(),
+                    Place = await _context.Places.FirstOrDefaultAsync(s => s.Id == model.PlaceId),
                     Cost = (decimal)model.Cost,
                     Comment = model.Comment,
                     Status = (int)OrderStatus.New
@@ -48,18 +49,23 @@ namespace Himchistka.Services.Services
             {
                 var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == model.Id);
                 order.ClientId = (Guid)(model.ClientId != null ? model.ClientId : Guid.Empty);
+                order.Place = await _context.Places.FirstOrDefaultAsync(s => s.Id == model.PlaceId);
                 order.Services = await _context.Services.Where(s => model.Services.Contains(s.Id)).ToListAsync();
+                order.Comment = model.Comment;
+                order.Status = (int)model.Status;
                 res = _mapper.Map<DTOOrders>(order);
             }
             await _context.SaveChangesAsync();
             return res;
         }
 
-        public async Task<IList<DTOOrders>> GetAllOrders()
+        public async Task<IList<DTOOrders>> GetAllOrders(Guid placeId)
         {
             var orders = _context.Orders.AsNoTracking()
                                         .Include(c => c.Client)
                                         .Include(c => c.Services)
+                                        .Include(c => c.Place)
+                                        .Where(p => p.Place.Id == placeId)
                                         .ToList();
 
             var res = new List<DTOOrders>();

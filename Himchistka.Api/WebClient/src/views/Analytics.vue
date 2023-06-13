@@ -251,6 +251,7 @@ export default {
     },
     changeChart(){
         debugger
+        let orders = Orders.filter(o => o.p)
     }
   },
   created(){
