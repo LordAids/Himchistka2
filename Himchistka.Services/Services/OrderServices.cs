@@ -37,7 +37,8 @@ namespace Himchistka.Services.Services
                     Place = await _context.Places.FirstOrDefaultAsync(s => s.Id == model.PlaceId),
                     Cost = (decimal)model.Cost,
                     Comment = model.Comment,
-                    Status = (int)OrderStatus.New
+                    Status = (int)OrderStatus.New,
+                    CreationTime = DateTime.Now,
                 };
 
                 _context.Orders.Add(order);
@@ -59,13 +60,39 @@ namespace Himchistka.Services.Services
             return res;
         }
 
+        public async Task<IList<DTOOrders>> GetAllOrders()
+        {
+            var orders = _context.Orders.AsNoTracking()
+                                        .Include(c => c.Client)
+                                        .Include(c => c.Services)
+                                        .Include(c => c.Place)
+                                        .ToList();
+
+            var res = new List<DTOOrders>();
+            foreach (var order in orders)
+            {
+                res.Add(new DTOOrders()
+                {
+                    ClientId = order.ClientId,
+                    Services = order.Services.Select(o => o.Id).ToList(),
+                    Comment = order.Comment,
+                    Cost = order.Cost,
+                    Status = order.Status,
+                    ClientName = order.Client.FirstName + " " + order.Client.LastName
+                });
+            }
+
+            return _mapper.Map<List<DTOOrders>>(res);
+
+        }
+
         public async Task<IList<DTOOrders>> GetAllOrders(Guid placeId)
         {
             var orders = _context.Orders.AsNoTracking()
                                         .Include(c => c.Client)
                                         .Include(c => c.Services)
                                         .Include(c => c.Place)
-                                        .Where(p => p.Place.Id == placeId)
+                                        .Where(c => c.Place.Id == placeId)
                                         .ToList();
 
             var res = new List<DTOOrders>();

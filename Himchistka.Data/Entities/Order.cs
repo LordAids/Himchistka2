@@ -20,6 +20,7 @@ namespace Himchistka.Data.Entities
         public decimal Cost { get; set; }
         public int Status { get; set; }
         public string Comment { get; set; }
+        public DateTime? CreationTime { get; set; }
 
         [ForeignKey("ClientId")]
         public Client Client { get; set; }
