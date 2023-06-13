@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import Login from '../views/Login.vue'
 import Setting from '../views/Settings.vue'
 import Orders from '../views/Orders.vue'
+import Analytics from '../views/Analytics.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/orders',
     name: 'orders',
     component: Orders
+  },
+  {
+    path: '/analytics',
+    name: 'analytics',
+    component: Analytics
   },
   { path: '*', redirect: '/' },
 ]

@@ -32,7 +32,7 @@
           </v-list-item>
 
 
-          <v-list-item>
+          <v-list-item to="/analytics">
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>
             </v-list-item-icon>

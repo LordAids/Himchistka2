@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import axios from 'axios'
+import  Bar  from 'vue-chartjs'
 
 Vue.config.productionTip = false
 axios.defaults.headers.common['Content-Type'] = 'application/json'
@@ -20,5 +21,6 @@ new Vue({
   store,
   axios,
   vuetify,
+  Bar,
   render: h => h(App)
 }).$mount('#app')

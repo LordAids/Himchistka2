@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section class="pa-5">
         <v-toolbar>
             <v-toolbar-title>
                 <h4>Настройки прачечных</h4>
