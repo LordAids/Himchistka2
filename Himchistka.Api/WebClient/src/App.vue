@@ -31,7 +31,12 @@
             <v-list-item-title>Заказы</v-list-item-title>
           </v-list-item>
 
-
+          <v-list-item to="/clients">
+            <v-list-item-icon>
+              <v-icon>mdi-account</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Клиенты</v-list-item-title>
+          </v-list-item>
           <v-list-item to="/analytics">
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>

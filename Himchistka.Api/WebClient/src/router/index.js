@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Setting from '../views/Settings.vue'
 import Orders from '../views/Orders.vue'
 import Analytics from '../views/Analytics.vue'
+import Clients from '../views/Clients.vue'
 
 Vue.use(VueRouter)
 
@@ -34,7 +35,12 @@ const routes = [
     name: 'analytics',
     component: Analytics
   },
-  { path: '*', redirect: '/' },
+  {
+    path: '/clients',
+    name: 'clients',
+    component: Clients
+  },
+  { path: '*', redirect: '/orders' },
 ]
 
 const router = new VueRouter({

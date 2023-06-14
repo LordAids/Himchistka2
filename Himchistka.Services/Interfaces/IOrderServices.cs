@@ -16,5 +16,6 @@ namespace Himchistka.Services.Interfaces
         public Task DeleteOrder(Guid orderId);
         public Task<IList<DTOOrders>> GetAllOrders();
         void ChangeOrderStatus(Guid orderId, int statusId);
+        List<DTOOrders> GetClientOrder(Guid orderId);
     }
 }

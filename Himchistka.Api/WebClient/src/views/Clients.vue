@@ -2,7 +2,7 @@
     <section class="pa-5">
         <v-toolbar>
             <v-toolbar-title>
-                <h4>Заказы</h4>
+                <h4>Клиенты</h4>
             </v-toolbar-title>
             <v-spacer></v-spacer>
         </v-toolbar>
@@ -11,12 +11,12 @@
                 <v-flex lg12 hidden-sm-and-down>
                     <v-data-table
                     :headers="headers"
-                    :items="Orders"
+                    :items="Clients"
                     :loading="loading"
                     loading-text="Загрузка данных"
                     :items-per-page="15"
                     class="elevation-1"
-                    @click:row="openOrderCard"
+                    @click:row="openClientCards"
                     >
                     <template v-slot:top>
                             <v-toolbar flat max-width="600px">
@@ -25,23 +25,11 @@
                                         color="primary"
                                         dark
                                         class="mb-2  ma-2"
-                                        @click="ItemDialog = true, addForm = true"
+                                        @click="newClientForm = true, addForm = true"
                                         >
                                         Добавить
                                     </v-btn>
-                                    <v-select xs3
-                                        v-model="selectedPlace"
-                                        :items="Places"
-                                        label="Предприятие"
-                                        item-value="id"
-                                        item-text="name"
-                                        @change="getItems"
-                                        >
-
-                                    </v-select>
-                                    
                                 </v-flex>
-                                
                             </v-toolbar>
                         </template>
                         <template v-slot:item.status="{item}" max-width="200">
@@ -74,62 +62,6 @@
                 </v-flex>
             </v-layout>
         </v-card-text>
-        <v-dialog
-            v-model="ItemDialog"
-            :fullscreen="$vuetify.breakpoint.smAndDown"
-            max-width="800"
-            :persistent="true">
-            <v-card class="pb-4">
-                <v-toolbar>
-                    <v-toolbar-title>
-                        <h4>{{addForm ? 'Добавить' : 'Редактировать'}}</h4>
-                        <v-spacer></v-spacer>
-                    </v-toolbar-title>
-                </v-toolbar>
-                <v-card-text>
-                    <v-container tag="section" py-3 fluid grid-list-md>
-                        <v-form :lazy-validation="true">
-                                    <v-btn
-                                    @click="newClientForm = true"
-                                    >
-                                    Новый клиент?
-                                    </v-btn>
-                                    <v-autocomplete
-                                       v-model="form.clientId"
-                                       :items="Clients"
-                                       label="Клиент"
-                                       item-value="id"
-                                       item-text="selectName"
-                                       >
-                                    </v-autocomplete>
-                                    <v-select
-                                       v-model="form.services"
-                                       multiple
-                                       :items="Services"
-                                       label="Услуги"
-                                       item-value="id"
-                                       item-text="name"
-                                       @change="changeCoast"
-                                       >
-                                    </v-select> 
-                                    <v-text-field
-                                        v-model="form.comment"
-                                        label="Комментарий"
-                                    ></v-text-field> 
-                                    <div class="body-1">
-                                        Итогвая цена: {{ form.Cost }} рублей
-                                    </div>
-                        </v-form>
-                        
-                    </v-container>
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn rounded @click="ItemDialog = false" color="secondary">Отмена</v-btn>
-                    <v-btn rounded color="primary" @click="addItem">Добавить</v-btn>
-                </v-card-actions>
-  
-            </v-card>
-        </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="700px">
           <v-card>
             <v-card-title class="text-h6">Вы уверены, что хотите удалить данный заказ?</v-card-title>
@@ -191,58 +123,89 @@
   
             </v-card>
         </v-dialog>
-        <v-dialog v-model="orderDialog" max-width="700px" :persistent="true">
+        <v-dialog v-model="clientDialog" max-width="700px" :persistent="true">
             <v-toolbar dark color="primary">
-                <h4>
-                    <span>Заказ для {{ dialogForm.clientName }}</span>
-                </h4>
-                <v-spacer></v-spacer>
-                <v-btn icon dark @click="orderDialog = false">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
-            </v-toolbar>
+                    <h4>
+                        <span> {{ dialogForm.firstName + " " + dialogForm.lastName }}</span>
+                    </h4>
+                    <v-spacer></v-spacer>
+                    <v-btn icon dark @click="clientDialog = false">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </v-toolbar>
             <v-card>
                 <v-card-text>
                     <v-container grid-list-md fluid>
-                        <v-layout row wrap>
-                            <v-select
-                                v-model="dialogForm.status"
-                                :items="statuses"
-                                label="Статус заказа"
-                                item-value="value"
-                                item-text="text"
-                                @change="statusChange(dialogForm)"
-                            >
-                            </v-select>
+                        <v-layout class="align-center">
+                            <v-flex xs4 subheading>
+                                <div class="text-bold">
+                                    Имя:
+                                </div>
+                            </v-flex>
+                            <v-flex xs8 text-xs-right>
+                                <div class="text--secondary">
+                                    {{ dialogForm.firstName }}
+                                </div>
+                            </v-flex>
                         </v-layout>
                         <v-layout class="align-center">
                             <v-flex xs4 subheading>
                                 <div class="text-bold">
-                                    Дата:
+                                    Фамилия:
                                 </div>
                             </v-flex>
                             <v-flex xs8 text-xs-right>
                                 <div class="text--secondary">
-                                    {{ dialogForm.creationTime | moment("DD MMMM YYYY HH:mm") }}
+                                    {{ dialogForm.lastName }}
                                 </div>
                             </v-flex>
                         </v-layout>
-                        <h4>Услуги:</h4>
-                        <v-layout v-for="(service,i) in dialogForm.services">
+                        <v-layout class="align-center">
                             <v-flex xs4 subheading>
                                 <div class="text-bold">
-                                    {{ service.name }}
+                                    Почта:
                                 </div>
                             </v-flex>
                             <v-flex xs8 text-xs-right>
                                 <div class="text--secondary">
-                                    {{ service.price }} рублей
+                                    {{ dialogForm.email }}
+                                </div>
+                            </v-flex>
+                        </v-layout>
+                        <v-layout class="align-center">
+                            <v-flex xs4 subheading>
+                                <div class="text-bold">
+                                    Номер телефона:
+                                </div>
+                            </v-flex>
+                            <v-flex xs8 text-xs-right>
+                                <div class="text--secondary">
+                                    {{ dialogForm.phoneNumber }}
+                                </div>
+                            </v-flex>
+                        </v-layout>
+                        <h4>Заказы:</h4>
+                        <v-layout v-for="(order,i) in dialogForm.orders">
+                            <v-flex xs4 subheading>
+                                <div class="text-bold">
+                                    №{{ order.number }}
+                                </div>
+                            </v-flex>
+                            <v-flex xs4 text-xs-right>
+                                <div class="text--secondary">
+                                    {{ order.cost }} рублей
+                                </div>
+                            </v-flex>
+                            <v-flex xs4 text-xs-right>
+                                <div class="text--secondary">
+                                    {{ getStatus(order.status) }}
                                 </div>
                             </v-flex>
                         </v-layout>
                     </v-container>
                 </v-card-text>
             </v-card>
+
         </v-dialog>
     </section>
   </template>
@@ -267,8 +230,8 @@
         ItemDialog: false,
         dialogDelete: false,
         newClientForm: false,
-        orderDialog: false,
-        loading: true,
+        clientDialog: false,
+        loading: false,
         deleteItemId: null,
         addForm: true,
         form: {
@@ -286,38 +249,39 @@
             birthday: null
         },
         dialogForm: {
-            clientName : '',
-            orderNumber: '',
-            creationTime: null,
-            id: null,
-            services: []
+            firstName : '',
+            lastName: '',
+            email: null,
+            phoneNumber: null,
+            number: null,
+            status: '',
+            orders: []
         }
-        
     }
   },
   computed: {
       headers () {
         return [
           {
-            text: 'Клиент',
+            text: 'Имя',
             align: 'start',
             sortable: false,
-            value: 'clientName',
+            value: 'firstName',
           },
           {
-            text: 'Комментарий',
+            text: 'Фамилия',
             sortable: false,
-            value: 'comment',
+            value: 'lastName',
           },
           {
-            text: 'Стоимость (руб)',
+            text: 'Электронная почта',
             sortable: false,
-            value: 'cost',
+            value: 'email',
           },
           {
-            text: 'Статус',
+            text: 'Номер телефона',
             sortable: false,
-            value: 'status',
+            value: 'phoneNumber',
           },
        { text: 'Действия', value: 'actions', sortable: false  },
         ]
@@ -420,6 +384,12 @@
         this.Services = res.data
         })
     },
+    getClientOrder(id){
+        axios.get(`http://localhost:8000/api/Orders/ClientOrder?clientId=${id}`)
+        .then(res => {
+        this.dialogForm.orders = res.data
+        })
+    },
     getClients(){
         axios.get(`http://localhost:8000/api/Client`)
         .then(res => {
@@ -446,21 +416,29 @@
             this.getItems();
         })
     },
-    openOrderCard(item){
-        debugger
-        this.orderDialog = true
-        this.dialogForm.clientName = item.clientName
-        this.dialogForm.status = item.status
+    openClientCards(item){
         this.dialogForm.id = item.id
-        this.dialogForm.creationTime = item.creationTime
-        this.dialogForm.services = this.Services.filter(s => item.services.includes(s.id))
+        this.dialogForm.firstName = item.firstName
+        this.dialogForm.lastName = item.lastName
+        this.dialogForm.email = item.email
+        this.dialogForm.phoneNumber = item.phoneNumber
+        this.dialogForm.number = item.number
+        this.getClientOrder(this.dialogForm.id)
+        this.clientDialog = true
+    },
+    getStatus(id){
+        debugger
+        let status = this.statuses.filter(s => s.value == id)
+        return status[0].text
     }
+    
   },
   created() {
     this.getPlaces();
     this.getServices();
     this.getClients();
     this.getItems();
+    this.getClientOrder();
   }
   }
   

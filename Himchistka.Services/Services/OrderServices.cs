@@ -79,7 +79,10 @@ namespace Himchistka.Services.Services
                     Comment = order.Comment,
                     Cost = order.Cost,
                     Status = order.Status,
-                    ClientName = order.Client.FirstName + " " + order.Client.LastName
+                    ClientName = order.Client.FirstName + " " + order.Client.LastName,
+                    CreationTime = order.CreationTime,
+                    Number = order.Number,
+
                 });
             }
 
@@ -106,9 +109,12 @@ namespace Himchistka.Services.Services
                     Services = order.Services.Select(o => o.Id).ToList(),
                     Comment = order.Comment,
                     Cost = order.Cost,
-                    Status =  order.Status,
-                    ClientName = order.Client.FirstName + " " + order.Client.LastName
-                });
+                    Status = order.Status,
+                    ClientName = order.Client.FirstName + " " + order.Client.LastName,
+                    CreationTime = order.CreationTime,
+                    Number = order.Number,
+
+                }) ;
             }
 
             return _mapper.Map<List<DTOOrders>>(res);
@@ -159,6 +165,35 @@ namespace Himchistka.Services.Services
                 _context.SaveChanges();
             }
             catch(Exception ex) { }
+        }
+
+        public List<DTOOrders> GetClientOrder(Guid orderId)
+        {
+                var orders = _context.Orders.AsNoTracking()
+                                        .Include(c => c.Client)
+                                        .Include(c => c.Services)
+                                        .Include(c => c.Place)
+                                        .Where(c => c.ClientId == orderId)
+                                        .ToList();
+
+                var res = new List<DTOOrders>();
+                foreach (var order in orders)
+                {
+                    res.Add(new DTOOrders()
+                    {
+                        Id = order.Id,
+                        ClientId = order.ClientId,
+                        Services = order.Services.Select(o => o.Id).ToList(),
+                        Comment = order.Comment,
+                        Cost = order.Cost,
+                        Status = order.Status,
+                        ClientName = order.Client.FirstName + " " + order.Client.LastName,
+                        CreationTime = order.CreationTime,
+                        Number = order.Number,
+                    });
+                }
+
+                return _mapper.Map<List<DTOOrders>>(res);
         }
     }
 }

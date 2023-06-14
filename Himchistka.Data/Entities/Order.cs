@@ -12,10 +12,13 @@ namespace Himchistka.Data.Entities
     /// <summary>
     /// Заказ
     /// </summary>
+    [Index(nameof(Number), IsUnique = true)]
     public class Order
     {
         [Key]
         public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Number { get; set; }
         public Guid ClientId { get; set; }
         public decimal Cost { get; set; }
         public int Status { get; set; }

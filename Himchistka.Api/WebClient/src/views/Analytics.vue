@@ -33,7 +33,8 @@
                             multiple
                             label="Услуги"
                             item-value="id"
-                            item-text="name">
+                            item-text="name"
+                            >
                         </v-select>
                         <v-select
                             v-model="chosenSpendings"
@@ -48,6 +49,17 @@
                 <v-card class="order-2 pa-2 outlined tile" width="600px">
                         <v-layout>
                             <v-flex lg12 hidden-sm-and-down>
+                              <LineChartGenerator v-if="chartType == 1"
+                                    :chart-options="chartOptions"
+                                    :chart-data="chartData"
+                                    :chart-id="chartId"
+                                    :dataset-id-key="datasetIdKey"
+                                    :plugins="plugins"
+                                    :css-classes="cssClasses"
+                                    :styles="styles"
+                                    :width="width"
+                                    :height="height"
+                                />
                                 <Pie v-if="chartType == 2"
                                     :chart-options="chartOptions"
                                     :chart-data="chartData"
@@ -59,17 +71,7 @@
                                     :width="width"
                                     :height="height"
                                 />
-                                <LineChartGenerator v-if="chartType == 1"
-                                    :chart-options="chartOptions"
-                                    :chart-data="chartData"
-                                    :chart-id="chartId"
-                                    :dataset-id-key="datasetIdKey"
-                                    :plugins="plugins"
-                                    :css-classes="cssClasses"
-                                    :styles="styles"
-                                    :width="width"
-                                    :height="height"
-                                />
+                                
                             </v-flex>
                         </v-layout>
                 </v-card>
@@ -152,41 +154,41 @@ export default {
   data() {
     return {
         chartData: {
-        labels: [
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July'
+            labels: [
+          'Понедельник',
+          'Вторник',
+          'Среда',
+          'Четверг',
+          'Пятница',
+          'Суббота',
+          'Воскресенье'
         ],
-        datasets: [
-            {
-                label: 'Расходы',
-                backgroundColor: '#F44336',
-                data: [40, 39, 10, 40, 39, 80, 40]
-            },
-            {
-                label: 'Доходы',
-                backgroundColor: '#4CAF50',
-                data: [50, 49, 20, 50, 49, 90, 50]
-            }
-        ]
-      },
+            datasets: [
+                {
+                    label: 'Расходы',
+                    backgroundColor: '#F44336',
+                    data: [40, 39, 10, 40, 39, 80, 40]
+                },
+                {
+                    label: 'Доходы',
+                    backgroundColor: '#4CAF50',
+                    data: [50, 49, 20, 50, 49, 90, 50]
+                }
+            ]
+        },
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false
       },
       pieData: {
         labels: [
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July'
+          'Понедельник',
+          'Вторник',
+          'Среда',
+          'Четверг',
+          'Пятница',
+          'Суббота',
+          'Воскресенье'
         ],
         datasets: [
             {
@@ -243,6 +245,9 @@ export default {
         })
     },
     getOrders(){
+        let body = {
+        placeId: this.chosenPlace
+      }
         axios.get(`http://localhost:8000/api/Orders`)
         .then(res => {
             this.Orders = res.data.result
@@ -251,7 +256,15 @@ export default {
     },
     changeChart(){
         debugger
-        let orders = Orders.filter(o => o.p)
+        let body = {
+          Services: this.chosenServices,
+          PlaceId: this.chosenPlace,
+          Spendings: this.chosenSpendings
+        }
+        axios.post(`http://localhost:8000/api/Analityc/Chart`, body)
+        .then(res => {
+          console.log(res)
+        })
     }
   },
   created(){

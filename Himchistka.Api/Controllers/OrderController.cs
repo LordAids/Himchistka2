@@ -62,5 +62,12 @@ namespace Himchistka.Api.Controllers
             _orderServices.ChangeOrderStatus(orderId, statusId);
             return Ok();
         }
+
+        [Authorize]
+        [HttpGet("ClientOrder")]
+        public IActionResult GetClientOrder([FromQuery] Guid clientId)
+        {
+            return Ok(_orderServices.GetClientOrder(clientId));
+        }
     }
 }
