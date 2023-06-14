@@ -85,7 +85,7 @@ namespace Himchistka.Services.Services
                     {
                         Spending = sp,
                         Service = service,
-                        Count = model.Spendings.FirstOrDefault(s => s.Id == sp.Id) != null ? model.Spendings.FirstOrDefault(s => s.Id == sp.Id).Count : new decimal(0),
+                        Count = (double)(model.Spendings.FirstOrDefault(s => s.Id == sp.Id) != null ? model.Spendings.FirstOrDefault(s => s.Id == sp.Id).Count : 1),
                     });
                 }
                 _context.SpendingServices.AddRange(spendings);

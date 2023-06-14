@@ -71,6 +71,7 @@ builder.Services.AddScoped<IPlaceService, PlaceService>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
 builder.Services.AddScoped<ISpendingService, SpendingService>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IAnaliticService, AnaliticService>();
 builder.Services.AddScoped<DbContext, ApplicationDbContext>();
 
 

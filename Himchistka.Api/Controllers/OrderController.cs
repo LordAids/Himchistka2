@@ -23,11 +23,18 @@ namespace Himchistka.Api.Controllers
             return Ok(_orderServices.GetOrderById(orderId));
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         public IActionResult GetOrders([FromQuery]Guid placeId)
         {
             return Ok(_orderServices.GetAllOrders(placeId));
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult GetOrders()
+        {
+            return Ok(_orderServices.GetAllOrders());
         }
 
         [Authorize]
@@ -45,6 +52,14 @@ namespace Himchistka.Api.Controllers
         public IActionResult DeleteOrder([FromRoute] Guid orderId) 
         {
             _orderServices.DeleteOrder(orderId);
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost("ChangeStatus")]
+        public IActionResult ChangeOrderStatus([FromQuery] Guid orderId, [FromQuery] int statusId)
+        {
+            _orderServices.ChangeOrderStatus(orderId, statusId);
             return Ok();
         }
     }

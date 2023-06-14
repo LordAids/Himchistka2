@@ -12,6 +12,6 @@ namespace Himchistka.Data.Connections
         public Guid Id { get; set; }
         public Spending Spending { get; set; }
         public Service Service { get; set; }
-        public decimal Count { get; set; }
+        public double Count { get; set; }
     }
 }

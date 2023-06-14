@@ -43,6 +43,17 @@
                                 
                             </v-toolbar>
                         </template>
+                        <template v-slot:item.status="{item}" max-width="200">
+                            <v-select
+                                v-model="item.status"
+                                :items="statuses"
+                                label="Статус заказа"
+                                item-value="value"
+                                item-text="text"
+                                @change="statusChange(item)"
+                            >
+                            </v-select>
+                        </template>
                         <template v-slot:item.actions="{ item }">
                             <v-icon
                                 small
@@ -248,6 +259,26 @@
        { text: 'Действия', value: 'actions', sortable: false  },
         ]
       },
+      statuses (){
+        return[
+            {
+                text: 'Новый заказ',
+                value: 1
+            },
+            {
+                text: 'В работе',
+                value: 2
+            },
+            {
+                text: 'Ожидание заказчика',
+                value: 3
+            },
+            {
+                text: 'Выполнено',
+                value: 4
+            }
+        ]
+      }
     },
   methods: {
     addItem(){
@@ -304,7 +335,7 @@
       let body = {
         placeId: this.selectedPlace
       }
-      axios.get(`http://localhost:8000/api/Orders?placeId=${this.selectedPlace}`, body)
+      axios.post(`http://localhost:8000/api/Orders?placeId=${this.selectedPlace}`, body)
       .then(res => {
         this.Orders = res.data.result
         this.loading = false
@@ -314,6 +345,10 @@
         axios.get(`http://localhost:8000/api/Places`)
         .then(res => {
             this.Places = res.data
+            if(this.selectedPlace == null){
+                this.selectedPlace = this.Places[0].id
+                this.getItems()
+            }
         })
     },
     getServices(){
@@ -340,13 +375,20 @@
         });
         
         debugger
+    },
+    statusChange(item){
+        debugger
+        axios.post(`http://localhost:8000/api/Orders/ChangeStatus?orderId=${item.id}&statusId=${item.status}`)
+        .then(res => {
+            this.getItems();
+        })
     }
   },
   created() {
-    this.getItems();
     this.getPlaces();
     this.getServices();
     this.getClients();
+    this.getItems();
   }
   }
   

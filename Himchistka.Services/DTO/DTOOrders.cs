@@ -19,4 +19,9 @@ namespace Himchistka.Services.DTO
         public string Comment { get; set; }
         public List<Guid>? Services { get;set; }
     }
+    public class StatusDTO
+    {
+        public string Text { get; set; }
+        public int Value { get;set; }
+    }
 }

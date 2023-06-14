@@ -53,7 +53,7 @@ namespace Himchistka.Services.Services
                 order.Place = await _context.Places.FirstOrDefaultAsync(s => s.Id == model.PlaceId);
                 order.Services = await _context.Services.Where(s => model.Services.Contains(s.Id)).ToListAsync();
                 order.Comment = model.Comment;
-                order.Status = (int)model.Status;
+                order.Status = (int)model.Status.Value;
                 res = _mapper.Map<DTOOrders>(order);
             }
             await _context.SaveChangesAsync();
@@ -73,6 +73,7 @@ namespace Himchistka.Services.Services
             {
                 res.Add(new DTOOrders()
                 {
+                    Id = order.Id,
                     ClientId = order.ClientId,
                     Services = order.Services.Select(o => o.Id).ToList(),
                     Comment = order.Comment,
@@ -100,11 +101,12 @@ namespace Himchistka.Services.Services
             {
                 res.Add(new DTOOrders()
                 {
+                    Id = order.Id,
                     ClientId = order.ClientId,
                     Services = order.Services.Select(o => o.Id).ToList(),
                     Comment = order.Comment,
                     Cost = order.Cost,
-                    Status = order.Status,
+                    Status =  order.Status,
                     ClientName = order.Client.FirstName + " " + order.Client.LastName
                 });
             }
@@ -133,6 +135,31 @@ namespace Himchistka.Services.Services
             catch (Exception ex) { }
         }
 
+        public string GetOrderStatus(int statusId) 
+        {
+            switch(statusId)
+            {
+                case 1: return "Новый заказ";
+                case 2: return "В работе";
+                case 3: return "Ожидаение клиента";
+                case 4: return "Выполнено";
+                default: return "Новый заказ";
+            }
+
+        
+        }
+
+        public void ChangeOrderStatus(Guid orderId, int statusId)
+        {
+            try
+            {
+                var order = _context.Orders.FirstOrDefault(o => o.Id == orderId);
+                order.Status = statusId;
+                _context.Update(order);
+                _context.SaveChanges();
+            }
+            catch(Exception ex) { }
+        }
     }
 }
     
