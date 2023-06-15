@@ -214,11 +214,12 @@ methods: {
     this.form.spendings.push(spend)
   },
   editItem(item){
+      debugger
       this.form.name = item.name
       this.form.description = item.description
       this.form.phoneNumber= item.phoneNumber
       this.form.price= item.price
-      this.form.places= item.places.map(e => e.id)
+      this.form.places= item.places
       this.form.id = item.id
       this.ItemDialog = true
   },

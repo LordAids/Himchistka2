@@ -36,8 +36,19 @@ namespace Himchistka.Services.Services
 
         public async Task<IList<DTOServices>> GetAllServices()
         {
-            var Services = await _context.Services.ToListAsync();
-            return _mapper.Map<IList<DTOServices>>(Services);
+            var Services = await _context.Services.Include(p => p.Places).ToListAsync();
+            var res = _mapper.Map<IList<DTOServices>>(Services);
+
+            foreach(var service in res)
+            {
+                service.Places = new List<Guid>();
+                var serv = Services.FirstOrDefault(s => s.Id == service.Id);
+                var places = serv.Places.Select(s => s.Id).ToList();
+                service.Places.AddRange(places);
+
+            }
+
+            return res;
         }
 
         public async Task<DTOServices> GetServiceById(Guid serviceId)

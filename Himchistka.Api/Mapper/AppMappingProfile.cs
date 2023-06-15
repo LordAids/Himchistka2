@@ -15,6 +15,8 @@ namespace Himchistka.Api.Mapper
             CreateMap<Service, DTOServices>().ReverseMap()
                 .ForMember(c => c.Spendings, c => c.Ignore())
                 .ForMember(c => c.Places, c => c.Ignore());
+            CreateMap<Service, DTOServices>()
+                .ForMember(c => c.Places, c => c.Ignore());
             CreateMap<Place, DTOPlace>().ReverseMap();
             CreateMap<Spending, DTOSpending>().ReverseMap();
             CreateMap<Client, DTOClient>().ReverseMap();
