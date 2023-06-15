@@ -8,7 +8,7 @@ namespace Himchistka.Services.DTO.Analitic
 {
     public class MakeChartAnalitic
     {
-        public string PlaceId { get; set; }
+        public List<Guid>? Places { get; set; }
         public List<Guid>? Services { get;set; }
         public List<Guid>? Spendings { get; set; }
     }

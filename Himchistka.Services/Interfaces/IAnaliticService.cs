@@ -10,6 +10,6 @@ namespace Himchistka.Services.Interfaces
     public interface IAnaliticService
     {
         public Task<DTOChartAnalitic> GetChartAnalitic(MakeChartAnalitic model);
-        public Task<DTOPieAnalitic> GetPieAnalitic(MakePieAnalitic model);
+        public Task<DTOPieAnalitic> GetPieAnalitic(MakeChartAnalitic model);
     }
 }

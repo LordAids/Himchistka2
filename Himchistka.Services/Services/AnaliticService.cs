@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,60 +25,135 @@ namespace Himchistka.Services.Services
         }
         public async Task<DTOChartAnalitic> GetChartAnalitic(MakeChartAnalitic model)
         {
-            var orders = _context.Orders
+            try
+            {
+                var orders = _context.Orders
+                                 .AsNoTracking()
                                  .Include(o => o.Services)
                                      .ThenInclude(s => s.Spendings)
                                         .ThenInclude(s => s.Spending)
-                                 .Include(o => o.Place);
+                                 .Include(o => o.Place)
+                                 .Where(p => model.Places.Contains(p.Place.Id)).ToList();
 
-            var services = _context.Services
-                                .Include(s => s.Spendings)
-                                .Include(s => s.Spendings);
+                var services = _context.Services
+                                    .AsNoTracking()
+                                    .Include(s => s.Spendings).ToList();
 
-            var res = new DTOChartAnalitic();
-            var labes = new List<string>();
-            //прописание labels
-            foreach (var order in orders)
-                labes.Add(order.CreationTime.Value.ToShortDateString());
-
-            res.Labels.AddRange(labes);
-            
-            foreach(var label in labes)
-            {
-                res.Profits.Add(orders.Where(o => o.CreationTime.Value.ToShortDateString() == label).Select(s => s.Cost).Sum());
-                res.Spendings.Add(GetOrderSpendings(orders.Where(o => o.CreationTime.Value.ToShortDateString() == label)));
-
-            }
-
-
-            return res;
-
-        }
-
-
-        public decimal GetOrderSpendings(IEnumerable<Order> orders)
-        {
-            decimal res = 0;
-            var spendings = _context.Spendings.ToList();
-            foreach (var order in orders)
-            {
-                var services = order.Services;
-                var servicesSpendings = _context.SpendingServices.Where(s => services.Select(sr => sr.Id).Contains(s.Id));
-                spendings = spendings.Where(s => servicesSpendings.Select(ss => ss.Spending.Id).Contains(s.Id)).ToList();
-
-
-                foreach (var s in spendings)
+                var res = new DTOChartAnalitic()
                 {
-                    res += (decimal)(s.Price * servicesSpendings.FirstOrDefault(s => s.Service.Id == s.Id).Count);
+                    Labels = new List<string>(),
+                    Profits = new List<decimal>(),
+                    Spendings = new List<double>()
+                };
+                var labes = new List<DateTime>();
+                //прописание labels
+                foreach (var order in orders)
+                    if (order.CreationTime != null)
+                    {
+                        labes.Add(order.CreationTime.Value.Date);
+                        res.Labels.Add(order.CreationTime.Value.ToShortDateString());
+                    }
+
+                labes = labes.Distinct().ToList();
+                res.Labels = res.Labels.Distinct().ToList();
+
+                foreach (var label in labes)
+                {
+                    var labelOrders = orders.Where(o => o.CreationTime!= null && o.CreationTime.Value.Date == label);
+                    //res.Profits.Add(labelOrders.Where(s => model.Services.Intersect(s.Services.Select(s => s.Id)).Any()).Select(s => s.Cost).Sum());
+                    var profitServicesForOrder = labelOrders.Select(s => s.Services).ToList();
+                    List<Service> profitServices= new List<Service>();
+                    foreach(var service in profitServicesForOrder)
+                        foreach(var s in service)
+                            if (model.Services.Contains(s.Id))
+                                profitServices.Add(s);
+
+                    res.Profits.Add(profitServices.Select(s => s.Price).Sum());
+                    res.Spendings.Add(GetOrderSpendings(labelOrders, model));
                 }
+
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception (ex.ToString());
+            }
+
+        }
+
+        private double GetOrderSpendings(IEnumerable<Order> orders, MakeChartAnalitic model)
+        {
+            double res = 0;
+
+            var services = _context.Services.Include(s => s.Spendings)
+                                            .ThenInclude(s => s.Spending)
+                                            .Include(o => o.Orders)
+                                            .ToList();
+            //var _spendingServices = _context.SpendingServices.AsNoTracking().ToList();
+            foreach (var order in orders)
+            {
+                var orderService = services.Where(s => s.Orders.Select(s => s.Id).Contains(order.Id)).ToList();
+                var orderSpendings = orderService.Select(s => s.Spendings).ToList();
+
+                foreach(var ord in orderSpendings)
+                    foreach(var s in ord.Select(s => s.Spending))
+                        if(model.Spendings.Contains(s.Id))
+                        {
+                            var pr = s.Price;
+                            var sum = ord.Where(ss => ss.Spending == s).Select(s => s.Count).Sum();
+                            res += s.Price * ord.FirstOrDefault(sp => sp.Spending.Id == s.Id).Count;
+                        }
+
             }
 
             return res;
 
         }
-        public Task<DTOPieAnalitic> GetPieAnalitic(MakePieAnalitic model)
+
+        public async Task<DTOPieAnalitic> GetPieAnalitic(MakeChartAnalitic model)
         {
-            throw new NotImplementedException();
+            var res = new DTOPieAnalitic()
+            {
+                Labels = new List<string>(),
+                Colors = new List<string>(),
+                Value = new List<double>()
+            };
+
+            var orders = _context.Orders
+                                 .AsNoTracking()
+                                 .Include(o => o.Services)
+                                     .ThenInclude(s => s.Spendings)
+                                        .ThenInclude(s => s.Spending)
+                                 .Include(o => o.Place)
+                                 .Where(p => model.Places.Contains(p.Place.Id)).ToList();
+
+            var services = orders.SelectMany(s => s.Services).Where(s => model.Services.Contains(s.Id)).ToList();
+            var dataServices = _context.Services.ToList();
+            foreach(var s in dataServices.Where(sr => services.Select(s => s.Id).Contains(sr.Id)))
+            {
+                res.Labels.Add(s.Name);
+                res.Colors.Add("#4CAF50");
+                res.Value.Add((double)services.Where(sr => sr.Id == s.Id).Select(sr => sr.Price).Sum());
+            }
+
+            var spendings = orders.SelectMany(s => s.Services).SelectMany(s => s.Spendings).Select(s => s.Spending).ToList();
+            var dataSpendings = _context.Spendings.ToList();
+            var dataServiceSpendings = _context.SpendingServices.Include(s => s.Service).ToList();
+
+            List<Guid> serviceInAnalytic = new List<Guid>();
+
+            foreach(var s in dataSpendings.Where(sp => spendings.Select(s => s.Id).Contains(sp.Id)))
+            {
+                res.Labels.Add(s.Name);
+                res.Colors.Add("#F44336");
+                res.Value.Add((double)spendings.Where(sr => sr.Id == s.Id).Select(sr => sr.Price).Sum() * dataServiceSpendings.FirstOrDefault(sp => sp.Spending == s && !serviceInAnalytic.Contains(sp.Service.Id)).Count
+                               );
+                serviceInAnalytic.Add(s.Id);
+            }
+
+
+            return res;
         }
     }
 }

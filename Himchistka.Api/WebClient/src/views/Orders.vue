@@ -117,7 +117,7 @@
                                         label="Комментарий"
                                     ></v-text-field> 
                                     <div class="body-1">
-                                        Итогвая цена: {{ form.Cost }} рублей
+                                        Итоговая цена: {{ form.Cost }} рублей
                                     </div>
                         </v-form>
                         

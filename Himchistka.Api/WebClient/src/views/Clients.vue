@@ -358,7 +358,6 @@
         })
     },
     getItems(){
-      this.loading = true
       let body = {
         placeId: this.selectedPlace
       }

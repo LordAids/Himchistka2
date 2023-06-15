@@ -20,7 +20,14 @@ namespace Himchistka.Api.Controllers
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> GetChartResult(MakeChartAnalitic model)
         {
-            return Ok(_analiticService.GetChartAnalitic(model));
+            return Ok(await _analiticService.GetChartAnalitic(model));
+        }
+
+        [HttpPost("Pie")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetPieResult(MakeChartAnalitic model)
+        {
+            return Ok(await _analiticService.GetPieAnalitic(model));
         }
     }
 }

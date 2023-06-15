@@ -20,15 +20,14 @@
 
                         <v-select
                             v-model="chosenPlace"
-                            @change="changeChart"
                             :items="Places"
                             label="Предприятие"
                             item-value="id"
+                            multiple
                             item-text="name">
                         </v-select>
-                        <v-select
+                        <v-select 
                             v-model="chosenServices"
-                            @change="changeChart"
                             :items="Services"
                             multiple
                             label="Услуги"
@@ -36,15 +35,20 @@
                             item-text="name"
                             >
                         </v-select>
-                        <v-select
+                        <v-select 
                             v-model="chosenSpendings"
-                            @change="changeChart"
                             :items="Spendings"
                             label="Расходы"
                             multiple
                             item-value="id"
                             item-text="name">
-                        </v-select>  
+                        </v-select> 
+                        <v-btn
+                        color="primary"
+                        @click="changeChart"
+                        >
+                        Сформировать график
+                        </v-btn> 
                 </v-card>
                 <v-card class="order-2 pa-2 outlined tile" width="600px">
                         <v-layout>
@@ -62,7 +66,7 @@
                                 />
                                 <Pie v-if="chartType == 2"
                                     :chart-options="chartOptions"
-                                    :chart-data="chartData"
+                                    :chart-data="pieData"
                                     :chart-id="chartId"
                                     :dataset-id-key="datasetIdKey"
                                     :plugins="plugins"
@@ -208,7 +212,7 @@ export default {
         maintainAspectRatio: false
       },
     Places: [],
-    chosenPlace: 1,
+    chosenPlace: [],
     Services: [],
     chosenServices: [],
     Spendings: [],
@@ -227,14 +231,9 @@ export default {
         })
     },
     getPlaces(){
-        let firstPlace = {
-            name: "Все",
-            id: 1
-        }
         axios.get(`http://localhost:8000/api/Places`)
         .then(res => {
 
-            res.data.push(firstPlace)
             this.Places = res.data
         })
     },
@@ -255,18 +254,47 @@ export default {
         })
     },
     changeChart(){
-        debugger
         let body = {
           Services: this.chosenServices,
-          PlaceId: this.chosenPlace,
+          Places: this.chosenPlace,
           Spendings: this.chosenSpendings
         }
-        axios.post(`http://localhost:8000/api/Analityc/Chart`, body)
-        .then(res => {
-          console.log(res)
-        })
-    }
+        if(this.chartType ==1 ){
+          axios.post(`http://localhost:8000/api/Analityc/Chart`, body)
+            .then(res => {
+              console.log(res)
+              this.chartData.labels = res.data.labels,
+              this.chartData.datasets = []
+              let spendings = {
+                label: 'Расходы',
+                        backgroundColor: '#F44336',
+                        data: res.data.spendings
+              }
+              let profits = {
+                label: 'Доходы',
+                        backgroundColor: '#4CAF50',
+                        data: res.data.profits
+              }
+              this.chartData.datasets.push(spendings)
+              this.chartData.datasets.push(profits)
+            })
+            }
+        if(this.chartType == 2){
+          axios.post(`http://localhost:8000/api/Analityc/Pie`, body)
+            .then(res => {
+              console.log(res)
+              this.pieData.labels = res.data.labels,
+              this.pieData.datasets = []
+              let dataset = {
+                        backgroundColor: res.data.colors,
+                        data: res.data.value }
+              this.pieData.datasets.push(dataset)
+            })
+            }
+        }
+        
   },
+  
   created(){
     this.getItems();
     this.getPlaces();
