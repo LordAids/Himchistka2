@@ -155,14 +155,20 @@ namespace Himchistka.Services.Services
         
         }
 
-        public void ChangeOrderStatus(Guid orderId, int statusId)
+        public async void ChangeOrderStatus(Guid orderId, int statusId)
         {
             try
             {
-                var order = _context.Orders.FirstOrDefault(o => o.Id == orderId);
+                var order = _context.Orders.Include(c => c.Client).Include(s => s.Place).FirstOrDefault(o => o.Id == orderId);
                 order.Status = statusId;
                 _context.Update(order);
                 _context.SaveChanges();
+
+                if (order.Status == (int)OrderStatus.Waiting)
+                {
+                    var MailService = new MailService();
+                    await MailService.SendEmailAsync(order.Client.Email, "Ваш заказ готов", $"Ваш заказ №{order.Number} готов к получению по адресу {order.Place.Adress}");
+                }
             }
             catch(Exception ex) { }
         }
