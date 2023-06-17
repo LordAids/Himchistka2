@@ -11,5 +11,6 @@ namespace Himchistka.Services.DTO.Analitic
         public List<Guid>? Places { get; set; }
         public List<Guid>? Services { get;set; }
         public List<Guid>? Spendings { get; set; }
+        public List<DateTime>? Dates { get; set; }
     }
 }

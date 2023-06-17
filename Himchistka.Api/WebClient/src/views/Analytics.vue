@@ -8,15 +8,15 @@
         </v-toolbar>
             <v-card class="d-flex flex-wrap-reverse pa-5" flat tile xs12>
             <v-layout class="d-flex justify-center" align-center text-xs-center>
-                <v-card class="order-1 pa-2 outlined tile" width="600px">
+                <v-card class="order-1 pa-2 outlined tile" align-center width="600px">
                 <p class="body-1">Фильтрация</p>
-                        <v-select
+                        <!-- <v-select
                             v-model="chartType"
                             :items="chartsType"
                             label="Тип графика"
                             item-value="value"
                             item-text="name">
-                        </v-select>
+                        </v-select> -->
 
                         <v-select
                             v-model="chosenPlace"
@@ -26,6 +26,18 @@
                             multiple
                             item-text="name">
                         </v-select>
+
+                        <v-text-field
+                          v-model="dateRangeText"
+                          label="Период"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                        ></v-text-field>
+                        <v-date-picker
+                          v-model="dates"
+                          range
+                        ></v-date-picker>
+       
                         <v-select 
                             v-model="chosenServices"
                             :items="Services"
@@ -64,7 +76,7 @@
                                     :width="width"
                                     :height="height"
                                 />
-                                <Pie v-if="chartType == 2"
+                                <Pie
                                     :chart-options="chartOptions"
                                     :chart-data="pieData"
                                     :chart-id="chartId"
@@ -154,6 +166,12 @@ export default {
         },
       ]
     },
+    dateRangeText () {
+      if(this.dates != null){
+
+        return this.dates.join(' ~ ')
+      }
+      },
   },
   data() {
     return {
@@ -219,6 +237,8 @@ export default {
     chosenSpendings: [],
     Orders: [],
     chartType: 1,
+    dates: null,
+
 
     }
     
@@ -257,9 +277,9 @@ export default {
         let body = {
           Services: this.chosenServices,
           Places: this.chosenPlace,
-          Spendings: this.chosenSpendings
+          Spendings: this.chosenSpendings,
+          Dates: this.dates
         }
-        if(this.chartType ==1 ){
           axios.post(`http://localhost:8000/api/Analityc/Chart`, body)
             .then(res => {
               console.log(res)
@@ -278,8 +298,6 @@ export default {
               this.chartData.datasets.push(spendings)
               this.chartData.datasets.push(profits)
             })
-            }
-        if(this.chartType == 2){
           axios.post(`http://localhost:8000/api/Analityc/Pie`, body)
             .then(res => {
               console.log(res)
@@ -290,7 +308,6 @@ export default {
                         data: res.data.value }
               this.pieData.datasets.push(dataset)
             })
-            }
         }
         
   },

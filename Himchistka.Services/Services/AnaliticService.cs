@@ -27,13 +27,17 @@ namespace Himchistka.Services.Services
         {
             try
             {
+                var maxDate = model.Dates.Max();
+                var minDate = model.Dates.Min();
                 var orders = _context.Orders
-                                 .AsNoTracking()
-                                 .Include(o => o.Services)
-                                     .ThenInclude(s => s.Spendings)
-                                        .ThenInclude(s => s.Spending)
-                                 .Include(o => o.Place)
-                                 .Where(p => model.Places.Contains(p.Place.Id)).ToList();
+                                  .AsNoTracking()
+                                  .Include(o => o.Services)
+                                      .ThenInclude(s => s.Spendings)
+                                         .ThenInclude(s => s.Spending)
+                                  .Include(o => o.Place)
+                                  .Where(p => model.Places.Contains(p.Place.Id)
+                                   && (p.CreationTime > minDate.AddDays(-1) && p.CreationTime < maxDate.AddDays(1)))
+                                  .ToList();
 
                 var services = _context.Services
                                     .AsNoTracking()
@@ -54,8 +58,8 @@ namespace Himchistka.Services.Services
                         res.Labels.Add(order.CreationTime.Value.ToShortDateString());
                     }
 
-                labes = labes.Distinct().ToList();
-                res.Labels = res.Labels.Distinct().ToList();
+                labes = labes.Distinct().OrderBy(d => d).ToList();
+                res.Labels = res.Labels.Distinct().OrderBy(d => d).ToList();
 
                 foreach (var label in labes)
                 {
@@ -113,6 +117,8 @@ namespace Himchistka.Services.Services
 
         public async Task<DTOPieAnalitic> GetPieAnalitic(MakeChartAnalitic model)
         {
+            var maxDate = model.Dates.Max();
+            var minDate = model.Dates.Min();
             var res = new DTOPieAnalitic()
             {
                 Labels = new List<string>(),
@@ -126,7 +132,9 @@ namespace Himchistka.Services.Services
                                      .ThenInclude(s => s.Spendings)
                                         .ThenInclude(s => s.Spending)
                                  .Include(o => o.Place)
-                                 .Where(p => model.Places.Contains(p.Place.Id)).ToList();
+                                 .Where(p => model.Places.Contains(p.Place.Id)
+                                  && (p.CreationTime > minDate.AddDays(-1) && p.CreationTime < maxDate.AddDays(1)))
+                                 .ToList();
 
             var services = orders.SelectMany(s => s.Services).Where(s => model.Services.Contains(s.Id)).ToList();
             var dataServices = _context.Services.ToList();
