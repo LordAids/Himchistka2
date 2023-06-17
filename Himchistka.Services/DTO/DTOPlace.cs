@@ -11,5 +11,7 @@ namespace Himchistka.Services.DTO
         public Guid? Id { get; set; }
         public string Name { get; set; }
         public string Adress { get; set; }
+        public double MounthPrice { get; set; } = 0;
+
     }
 }

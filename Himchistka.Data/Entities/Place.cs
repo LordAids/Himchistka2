@@ -17,6 +17,7 @@ namespace Himchistka.Data.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Adress { get; set; }
+        public double MounthPrice { get; set; } = 0;
         public ICollection<Service> Services { get; set; }
         public ICollection<Order> Orders { get; set; }
         public ICollection<ApplicationUser> Employee { get; set; }

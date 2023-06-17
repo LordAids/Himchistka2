@@ -75,7 +75,19 @@
                                       type="number"
                                       v-model="form.price"
                                       label="Стоимость одной единицы (руб)"
-                                  ></v-text-field>     
+                                  ></v-text-field>   
+                                  <p>Цвет расхода</p>
+                                  <v-color-picker
+                                    v-model="form.color"
+                                    dot-size="11"
+                                    hide-canvas
+                                    hide-inputs
+                                    hide-mode-switch
+                                    hide-sliders
+                                    mode="rgba"
+                                    show-swatches
+                                    swatches-max-height="100"
+                                  ></v-color-picker>  
                       </v-form>
                       
                   </v-container>
@@ -123,7 +135,8 @@ data(){
           id: null,
           name: '',
           unitName:'',
-          price: ''
+          price: '',
+          color: ''
       }
   }
 },
@@ -159,6 +172,7 @@ methods: {
           this.form.unitName = ''
           this.form.price = ''
           this.form.id = null
+          this.form.color = ''
           console.log(res.body)
           this.getItems();
       })
@@ -169,6 +183,7 @@ methods: {
       this.form.unitName = item.unitName
       this.form.price= item.price
       this.form.id = item.id
+      this.form.color = item.color
       this.ItemDialog = true
   },
   deleteItem(item){

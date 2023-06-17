@@ -77,6 +77,20 @@
                                       type="number"
 
                                   ></v-text-field>
+
+                                  <p>Цвет услуги</p>
+                                  <v-color-picker
+                                    v-model="form.color"
+                                    dot-size="11"
+                                    hide-canvas
+                                    hide-inputs
+                                    hide-mode-switch
+                                    hide-sliders
+                                    mode="rgba"
+                                    show-swatches
+                                    swatches-max-height="100"
+                                  ></v-color-picker>
+
                                   <v-select
                                       v-model="form.places"
                                       :items="PlaceItems"
@@ -96,14 +110,22 @@
                                     </v-btn>
                                     <v-card class="pb-4" v-for="spend in form.spendings" :key="spend.name">
                                        <v-select
+                                       @change = changeCost
                                        v-model="spend.id"
                                        :items="spendings"
                                        label="Расходы"
                                        item-value="id"
-                                       item-text="name"
+                                       :item-text= spend.name
                                        >
+                                       <template slot="item" slot-scope="data">
+                                        {{ data.item.name }} ({{ data.item.unitName }})
+                                      </template>
+                                      <template slot="selection" slot-scope="data">
+                                        {{ data.item.name }} ({{ data.item.unitName }})
+                                      </template>
                                        </v-select>
                                        <v-text-field
+                                        @change = changeCost
                                           v-model="spend.count"
                                           label="Количество"
                                           type="number"
@@ -111,6 +133,9 @@
                                       ></v-text-field>
                                     </v-card>
                                   </section>
+                                  <div class="body-1">
+                                        Себестоимость: {{ form.cost }} рублей
+                                    </div>
                       </v-form>
                   </v-container>
               </v-card-text>
@@ -162,7 +187,9 @@ data(){
           price: '',
           places: [],
           spendingCount: 0,
-          spendings: []
+          spendings: [],
+          color: '',
+          cost: 0
       }
   }
 },
@@ -202,6 +229,8 @@ methods: {
           this.form.places = ''
           this.form.spendings = ''
           this.form.id = null
+          this.form.color = ''
+          this.form.cost = 0
           console.log(res.body)
           this.getItems();
       })
@@ -221,6 +250,8 @@ methods: {
       this.form.price= item.price
       this.form.places= item.places
       this.form.id = item.id
+      this.form.color = item.color
+      this.changeCost()
       this.ItemDialog = true
   },
   deleteItem(item){
@@ -256,6 +287,17 @@ methods: {
       .then(res => {
       this.spendings = res.data
     })
+  },
+  changeCost(){
+    this.form.cost = 0
+    debugger
+    this.form.spendings.forEach(element => {
+      let spend = this.spendings.find(s => s.id == element.id)
+      this.form.cost = this.form.cost + (spend.price * element.count)
+     });
+
+    if(isNaN(this.form.cost))
+        this.form.cost = 0
   }
 },
 created() {

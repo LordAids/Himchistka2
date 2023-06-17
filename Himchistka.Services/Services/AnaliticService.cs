@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -61,7 +62,25 @@ namespace Himchistka.Services.Services
                 labes = labes.Distinct().OrderBy(d => d).ToList();
                 res.Labels = res.Labels.Distinct().OrderBy(d => d).ToList();
 
-                foreach (var label in labes)
+
+                for(int i =  0; i < labes.Count; i++)
+                {
+                    var labelOrders = orders.Where(o => o.CreationTime != null && o.CreationTime.Value.Date == labes[i]);
+                    //res.Profits.Add(labelOrders.Where(s => model.Services.Intersect(s.Services.Select(s => s.Id)).Any()).Select(s => s.Cost).Sum());
+                    var profitServicesForOrder = labelOrders.Select(s => s.Services).ToList();
+                    List<Service> profitServices = new List<Service>();
+                    foreach (var service in profitServicesForOrder)
+                        foreach (var s in service)
+                            if (model.Services.Contains(s.Id))
+                                profitServices.Add(s);
+
+                    res.Profits.Add(profitServices.Select(s => s.Price).Sum());
+                    res.Spendings.Add(GetOrderSpendings(labelOrders, model));
+
+                    res.Spendings[i] += GetPlaceSpendings(model);
+                }
+
+                /*foreach (var label in labes)
                 {
                     var labelOrders = orders.Where(o => o.CreationTime!= null && o.CreationTime.Value.Date == label);
                     //res.Profits.Add(labelOrders.Where(s => model.Services.Intersect(s.Services.Select(s => s.Id)).Any()).Select(s => s.Cost).Sum());
@@ -74,7 +93,7 @@ namespace Himchistka.Services.Services
 
                     res.Profits.Add(profitServices.Select(s => s.Price).Sum());
                     res.Spendings.Add(GetOrderSpendings(labelOrders, model));
-                }
+                }*/
 
 
                 return res;
@@ -84,6 +103,20 @@ namespace Himchistka.Services.Services
                 throw new Exception (ex.ToString());
             }
 
+        }
+
+        private double GetPlaceSpendings(MakeChartAnalitic model)
+        {
+
+            var places = _context.Places.Where(p => model.Places.Contains(p.Id))
+                                        .ToList();
+
+            double res = 0;
+            //double dayCount = (model.Dates.Max() - model.Dates.Min()).TotalDays;
+            foreach (var place in places)
+                res += (place.MounthPrice / 30);
+
+            return res;
         }
 
         private double GetOrderSpendings(IEnumerable<Order> orders, MakeChartAnalitic model)
@@ -141,7 +174,7 @@ namespace Himchistka.Services.Services
             foreach(var s in dataServices.Where(sr => services.Select(s => s.Id).Contains(sr.Id)))
             {
                 res.Labels.Add(s.Name);
-                res.Colors.Add("#4CAF50");
+                res.Colors.Add(s.Color);
                 res.Value.Add((double)services.Where(sr => sr.Id == s.Id).Select(sr => sr.Price).Sum());
             }
 
@@ -154,7 +187,7 @@ namespace Himchistka.Services.Services
             foreach(var s in dataSpendings.Where(sp => spendings.Select(s => s.Id).Contains(sp.Id)))
             {
                 res.Labels.Add(s.Name);
-                res.Colors.Add("#F44336");
+                res.Colors.Add(s.Color);
                 res.Value.Add((double)spendings.Where(sr => sr.Id == s.Id).Select(sr => sr.Price).Sum() * dataServiceSpendings.FirstOrDefault(sp => sp.Spending == s && !serviceInAnalytic.Contains(sp.Service.Id)).Count
                                );
                 serviceInAnalytic.Add(s.Id);

@@ -70,7 +70,12 @@
                                     <v-text-field
                                         v-model="form.adress"
                                         label="Адрес"
-                                    ></v-text-field>    
+                                    ></v-text-field>   
+                                    <v-text-field
+                                        v-model="form.mounthPrice"
+                                        label="Точка окупаемости"
+                                        type="number"
+                                    ></v-text-field>   
                         </v-form>
                         
                     </v-container>
@@ -117,6 +122,7 @@ export default {
         form: {
             id: null,
             name: '',
+            mounthPrice: null,
             adress:''
         }
     }
@@ -151,6 +157,7 @@ export default {
             this.form.name = '',
             this.form.adress = ''
             this.form.id = null
+            this.form.mounthPrice = 0;
             console.log(res.body)
             this.getItems();
         })

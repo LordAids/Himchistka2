@@ -112,6 +112,8 @@
                             <v-date-picker
                                 v-model="clientForm.birthday"
                                 color="primary"
+                                locale="ru-ru"
+                                :first-day-of-week="0"
                             ></v-date-picker>
                         </v-form>
                     </v-container>

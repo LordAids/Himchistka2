@@ -19,6 +19,7 @@ namespace Himchistka.Data.Entities
         public string Name { get; set; }
         [Range(0, int.MaxValue)]
         public decimal Price { get; set; }
+        public string Color { get; set; } = "#4CAF50";
         public string Description { get; set; }
         public virtual ICollection<Order> Orders{ get; set; }
         public virtual ICollection<Place> Places { get; set; }

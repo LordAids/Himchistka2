@@ -36,6 +36,9 @@
                         <v-date-picker
                           v-model="dates"
                           range
+                          locale="ru-ru"
+                          no-title
+                          :first-day-of-week="0"
                         ></v-date-picker>
        
                         <v-select 
@@ -65,7 +68,7 @@
                 <v-card class="order-2 pa-2 outlined tile" width="600px">
                         <v-layout>
                             <v-flex lg12 hidden-sm-and-down>
-                              <LineChartGenerator v-if="chartType == 1"
+                              <Bar 
                                     :chart-options="chartOptions"
                                     :chart-data="chartData"
                                     :chart-id="chartId"
@@ -84,8 +87,6 @@
                                     :plugins="plugins"
                                     :css-classes="cssClasses"
                                     :styles="styles"
-                                    :width="width"
-                                    :height="height"
                                 />
                                 
                             </v-flex>
@@ -100,6 +101,7 @@
 
 <script>
 import { Pie } from 'vue-chartjs/legacy'
+import { Bar } from 'vue-chartjs/legacy'
 import { Line as LineChartGenerator } from 'vue-chartjs/legacy'
 import axios from 'axios'
 
@@ -108,6 +110,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  BarElement,
   ArcElement,
   LineElement,
   LinearScale,
@@ -115,12 +118,13 @@ import {
   PointElement
 } from 'chart.js'
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LineElement, LinearScale, PointElement)
+ChartJS.register(Title, Tooltip, Legend, ArcElement, BarElement, CategoryScale, LineElement, LinearScale, PointElement)
 
 export default {
   name: 'PieChart',
   components: {
     Pie,
+    Bar,
     LineChartGenerator
   },
   props: {
@@ -176,27 +180,8 @@ export default {
   data() {
     return {
         chartData: {
-            labels: [
-          'Понедельник',
-          'Вторник',
-          'Среда',
-          'Четверг',
-          'Пятница',
-          'Суббота',
-          'Воскресенье'
-        ],
-            datasets: [
-                {
-                    label: 'Расходы',
-                    backgroundColor: '#F44336',
-                    data: [40, 39, 10, 40, 39, 80, 40]
-                },
-                {
-                    label: 'Доходы',
-                    backgroundColor: '#4CAF50',
-                    data: [50, 49, 20, 50, 49, 90, 50]
-                }
-            ]
+            labels: [],
+            datasets: []
         },
       chartOptions: {
         responsive: true,
@@ -224,10 +209,6 @@ export default {
                 data: [50, 49, 20, 50, 49, 90, 50]
             }
         ]
-      },
-      chartOptions: {
-        responsive: true,
-        maintainAspectRatio: false
       },
     Places: [],
     chosenPlace: [],

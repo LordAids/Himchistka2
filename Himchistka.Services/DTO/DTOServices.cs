@@ -13,6 +13,7 @@ namespace Himchistka.Services.DTO
         public string Name { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }
+        public string Color { get; set; } = "#4CAF50";
         public List<Guid>? Places { get; set; }
         public List<DTOServiceSpending> Spendings { get; set; }
     }

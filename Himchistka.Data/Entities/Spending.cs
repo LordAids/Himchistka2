@@ -13,6 +13,7 @@ namespace Himchistka.Data.Entities
         public string Name { get; set; }
         public string UnitName { get; set; }
         public double Price { get; set; }
+        public string Color { get; set; } = "#F44336";
 
         public virtual List<SpendingServices> Services { get; set; }
     }
