@@ -17,6 +17,8 @@
                     :items-per-page="15"
                     class="elevation-1"
                     @click:row="openClientCards"
+                    :search="search"
+                    :custom-filter="customFilter"
                     >
                     <template v-slot:top>
                             <v-toolbar flat max-width="600px">
@@ -25,10 +27,22 @@
                                         color="primary"
                                         dark
                                         class="mb-2  ma-2"
-                                        @click="newClientForm = true, addForm = true"
+                                        @click="newClientForm = true"
                                         >
                                         Добавить
                                     </v-btn>
+                                    <v-btn xs3
+                                        color="primary"
+                                        dark
+                                        class="mb-2  ma-2"
+                                        @click="multiSenderForm = true">
+                                        Рассылка
+                                    </v-btn>
+                                    <v-text-field
+                                        v-model="search"
+                                        label="Поиск"
+                                        class="mx-4"
+                                        ></v-text-field>
                                 </v-flex>
                             </v-toolbar>
                         </template>
@@ -56,6 +70,12 @@
                                 @click="deleteItem(item)"
                             >
                                 mdi-delete
+                            </v-icon>
+                            <v-icon
+                                small
+                                @click="deleteItem(item)"
+                            >
+                                mdi-email
                             </v-icon>
                             </template>
                     </v-data-table>
@@ -236,6 +256,7 @@
         loading: false,
         deleteItemId: null,
         addForm: true,
+        search: '',
         form: {
             id: null,
             clientId: null,
@@ -431,6 +452,11 @@
         debugger
         let status = this.statuses.filter(s => s.value == id)
         return status[0].text
+    },
+    customFilter(value, search, item){
+        let res = search != null && typeof value === 'string'
+         && (item.firstName.toString().indexOf(search) !==-1 || item.lastName.toString().indexOf(search) !==-1 || item.email.toString().indexOf(search) !==-1)
+        return res
     }
     
   },
