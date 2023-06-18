@@ -101,6 +101,7 @@
                                        item-value="id"
                                        item-text="selectName"
                                        >
+                                       
                                     </v-autocomplete>
                                     <v-select
                                        v-model="form.services"
@@ -196,7 +197,7 @@
         <v-dialog v-model="orderDialog" max-width="700px" :persistent="true">
             <v-toolbar dark color="primary">
                 <h4>
-                    <span>Заказ для {{ dialogForm.clientName }}</span>
+                    <span>Заказ для {{ dialogForm.clientName }}. №{{ dialogForm.orderNumber }}</span>
                 </h4>
                 <v-spacer></v-spacer>
                 <v-btn icon dark @click="orderDialog = false">
@@ -225,7 +226,7 @@
                             </v-flex>
                             <v-flex xs8 text-xs-right>
                                 <div class="text--secondary">
-                                    {{ dialogForm.creationTime | moment("DD MMMM YYYY HH:mm") }}
+                                    {{ dialogForm.creationTime | moment("DD.MM.YYYY HH:mm") }}
                                 </div>
                             </v-flex>
                         </v-layout>
@@ -375,11 +376,12 @@
         })
     },
     editItem(item){
+        debugger
         console.log(item)
-        this.form.name = item.name
-        this.form.unitName = item.unitName
-        this.form.price= item.price
         this.form.id = item.id
+        this.form.clientId = item.clientId
+        this.form.services = item.services
+        this.form.comment = item.comment
         this.ItemDialog = true
     },
     deleteItem(item){
@@ -387,7 +389,7 @@
         this.dialogDelete = true
     },
     deleteItemConfirm(){
-        axios.delete(`http://localhost:8000/api/Spending?Id=${this.deleteItemId}`)
+        axios.delete(`http://localhost:8000/api/Orders/${this.deleteItemId}`)
         .then(res => {
             console.log(res)
             this.deleteItemId = null
@@ -405,6 +407,7 @@
         this.Orders = res.data.result
         this.loading = false
       })
+      .catch(res => console.log(res))
     },
     getPlaces(){
         axios.get(`http://localhost:8000/api/Places`)
@@ -455,6 +458,7 @@
         this.dialogForm.status = item.status
         this.dialogForm.id = item.id
         this.dialogForm.creationTime = item.creationTime
+        this.dialogForm.orderNumber = item.number
         this.dialogForm.services = this.Services.filter(s => item.services.includes(s.id))
     }
   },

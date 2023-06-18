@@ -11,6 +11,9 @@ namespace Himchistka.Services.DTO.Analitic
         public List<string> Labels {  get; set; }
         public List<double> Spendings {  get; set; }
         public List<decimal> Profits {  get; set; }
+        public int TotalOrders { get; set; }
+        public double TotalProfit { get; set; }
+        public double TotalSpend { get;set; }
 
     }
 }

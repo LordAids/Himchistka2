@@ -29,5 +29,7 @@ namespace Himchistka.Api.Controllers
         {
             return Ok(await _analiticService.GetPieAnalitic(model));
         }
+
+        
     }
 }

@@ -139,11 +139,10 @@ export default {
           {
             text: 'Адрес',
             value: 'adress',
-            filter: value => {
-              if (!this.calories) return true
-
-              return value < parseInt(this.calories)
-            },
+          },
+          {
+            text: 'Точка окупаемости',
+            value: 'mounthPrice',
           },
        { text: 'Действия', value: 'actions', sortable: false  },
         ]

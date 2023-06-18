@@ -19,7 +19,7 @@ namespace Himchistka.Services.DTO
         {
             get
             {
-                return $"{PhoneNumber} {LastName} {FirstName}";
+                return $"+{PhoneNumber} {LastName} {FirstName}";
             }
         }
     }

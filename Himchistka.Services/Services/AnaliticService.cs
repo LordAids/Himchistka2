@@ -96,6 +96,10 @@ namespace Himchistka.Services.Services
                 }*/
 
 
+                res.TotalOrders = orders.Count;
+                res.TotalProfit = (double)res.Profits.Sum();
+                res.TotalSpend = res.Spendings.Sum();
+
                 return res;
             }
             catch (Exception ex)

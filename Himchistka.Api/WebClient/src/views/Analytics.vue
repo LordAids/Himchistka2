@@ -8,7 +8,7 @@
         </v-toolbar>
             <v-card class="d-flex flex-wrap-reverse pa-5" flat tile xs12>
             <v-layout class="d-flex justify-center" align-center text-xs-center>
-                <v-card class="order-1 pa-2 outlined tile" align-center width="600px">
+                <v-card class="order-1 pa-2 outlined align-start align-self-start" align-center width="600px">
                 <p class="body-1">Фильтрация</p>
                         <!-- <v-select
                             v-model="chartType"
@@ -38,7 +38,7 @@
                           range
                           locale="ru-ru"
                           no-title
-                          :first-day-of-week="0"
+                          :first-day-of-week="1"
                         ></v-date-picker>
        
                         <v-select 
@@ -62,12 +62,21 @@
                         color="primary"
                         @click="changeChart"
                         >
-                        Сформировать график
+                        Сформировать аналитику
                         </v-btn> 
                 </v-card>
                 <v-card class="order-2 pa-2 outlined tile" width="600px">
                         <v-layout>
                             <v-flex lg12 hidden-sm-and-down>
+                              <div>
+                                  Суммарное количество заказов: {{ totalOrders }}
+                                </div>
+                                <div>
+                                  Суммарная прибыль: {{ totalProfit }} рублей
+                                </div>
+                                <div>
+                                  Суммарные затраты: {{ totalSpending }} рублей
+                                </div>
                               <Bar 
                                     :chart-options="chartOptions"
                                     :chart-data="chartData"
@@ -94,7 +103,7 @@
                 </v-card>
             </v-layout>
             
-        </v-card>
+            </v-card>
         
     </section>
 </template>
@@ -219,6 +228,9 @@ export default {
     Orders: [],
     chartType: 1,
     dates: null,
+    totalOrders: 0,
+    totalProfit: 0,
+    totalSpending: 0
 
 
     }
@@ -278,6 +290,10 @@ export default {
               }
               this.chartData.datasets.push(spendings)
               this.chartData.datasets.push(profits)
+
+              this.totalProfit = res.data.totalProfit
+              this.totalOrders = res.data.totalOrders
+              this.totalSpending = res.data.totalSpend
             })
           axios.post(`http://localhost:8000/api/Analityc/Pie`, body)
             .then(res => {

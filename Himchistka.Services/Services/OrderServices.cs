@@ -131,7 +131,7 @@ namespace Himchistka.Services.Services
         {
             try
             {
-                var Order = await _context.Orders.FirstOrDefaultAsync(p => p.Id == orderId);
+                var Order = _context.Orders.FirstOrDefault(p => p.Id == orderId);
                 if (Order != null)
                 {
                     _context.Orders.Remove(Order);

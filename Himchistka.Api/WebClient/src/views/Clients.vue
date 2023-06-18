@@ -35,7 +35,7 @@
                                         color="primary"
                                         dark
                                         class="mb-2  ma-2"
-                                        @click="multiSenderForm = true">
+                                        @click="multiEmailDialog = true">
                                         Рассылка
                                     </v-btn>
                                     <v-text-field
@@ -57,23 +57,21 @@
                             >
                             </v-select>
                         </template>
-                        <template v-slot:item.actions="{ item }">
+                        <template v-slot:item.actions="{ item }" @click="true">
                             <v-icon
-                                small
                                 class="mr-2"
                                 @click="editItem(item), addForm = false"
                             >
                                 mdi-pencil
                             </v-icon>
                             <v-icon
-                                small
+                                class="mr-2"
                                 @click="deleteItem(item)"
                             >
                                 mdi-delete
                             </v-icon>
                             <v-icon
-                                small
-                                @click="deleteItem(item)"
+                                @click="singleMail(item)"
                             >
                                 mdi-email
                             </v-icon>
@@ -84,10 +82,10 @@
         </v-card-text>
         <v-dialog v-model="dialogDelete" max-width="700px">
           <v-card>
-            <v-card-title class="text-h6">Вы уверены, что хотите удалить данный заказ?</v-card-title>
+            <v-card-title class="text-h6">Вы уверены, что хотите удалить клиента?</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="this.dialogDelete = false, this.deleteItemId = null">Отмена</v-btn>
+              <v-btn color="blue darken-1" text @click="dialogDelete = false, deleteItemId = null">Отмена</v-btn>
               <v-btn color="blue darken-1" text @click="deleteItemConfirm">Подтвердить</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
@@ -229,6 +227,58 @@
             </v-card>
 
         </v-dialog>
+        <v-dialog v-model="multiEmailDialog" max-width="700px" :persistent="true">
+            <v-toolbar dark color="primary">
+                    <h4>
+                        <span> Новая рассылка</span>
+                    </h4>
+                    <v-spacer></v-spacer>
+                    <v-btn icon dark @click="multiEmailDialog = false">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+            </v-toolbar>
+            <v-card>
+                <v-card-text>
+                    <v-container grid-list-md fluid>
+                        <v-checkbox
+                            v-model="mailForm.sendAll"
+                            :label="`Отправить всем`"
+                            ></v-checkbox>
+                        <v-autocomplete
+                                       :disabled="mailForm.sendAll"
+                                       v-model="mailForm.ClientIds"
+                                       :items="Clients"
+                                       label="Получатели"
+                                       item-value="id"
+                                       multiple
+                                       @change="singleMail"
+                                       >
+                                       <template slot="item" slot-scope="data">
+                                        {{ data.item.lastName }} ({{ data.item.email }})
+                                      </template>
+                                       <template slot="selection" slot-scope="data">
+                                        {{ data.item.lastName }} ({{ data.item.email }}),
+                                      </template>
+                                    </v-autocomplete>
+                        
+                        <v-text-field
+                            v-model="mailForm.subject"
+                            label="Тема письма">
+
+                        </v-text-field>
+                        <v-textarea
+                            v-model="mailForm.text"
+                            label="Тело письма"
+                            counter="120"
+                        >
+
+                        </v-textarea>
+                    </v-container>
+                        
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+        
     </section>
   </template>
   
@@ -256,6 +306,8 @@
         loading: false,
         deleteItemId: null,
         addForm: true,
+        multiEmailDialog: false,
+        emailDialog: false,
         search: '',
         form: {
             id: null,
@@ -279,6 +331,14 @@
             number: null,
             status: '',
             orders: []
+        },
+        mailForm: {
+            sendAll : false,
+            ClientIds : [],
+            subject: '',
+            text: ''
+
+
         }
     }
   },
@@ -389,16 +449,20 @@
         this.Orders = res.data.result
         this.loading = false
       })
+      .catch(res => console.log(res))
+
     },
     getPlaces(){
         axios.get(`http://localhost:8000/api/Places`)
         .then(res => {
             this.Places = res.data
             if(this.selectedPlace == null){
+                debugger
                 this.selectedPlace = this.Places[0].id
                 this.getItems()
             }
         })
+        .catch(res => console.log(res))
     },
     getServices(){
         axios.get(`http://localhost:8000/api/Services`)
@@ -449,7 +513,6 @@
         this.clientDialog = true
     },
     getStatus(id){
-        debugger
         let status = this.statuses.filter(s => s.value == id)
         return status[0].text
     },
@@ -457,6 +520,11 @@
         let res = search != null && typeof value === 'string'
          && (item.firstName.toString().indexOf(search) !==-1 || item.lastName.toString().indexOf(search) !==-1 || item.email.toString().indexOf(search) !==-1)
         return res
+    },
+    singleMail(item){
+        this.mailForm.ClientIds.push(item.id)
+        this.multiEmailDialog = true
+        debugger
     }
     
   },
@@ -465,7 +533,6 @@
     this.getServices();
     this.getClients();
     this.getItems();
-    this.getClientOrder();
   }
   }
   
