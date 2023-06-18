@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Himchistka.Data\Himchistka.Data.csproj" />
+    <ProjectReference Include="..\Himchistka.Data\Prachka.Data.csproj" />
   </ItemGroup>
 
 </Project>
