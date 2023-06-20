@@ -57,7 +57,7 @@ export default {
         axios.post(`http://localhost:8000/api/Account/token`, body)
         .then(response => {
             localStorage.setItem('user', JSON.stringify(response.data));
-            this.$router.push({ name: 'home' })
+            this.$router.push({ name: 'orders' })
           })
         .catch(res => {console.log(res)})
     },

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prachka.Api", "Himchistka.Api\Prachka.Api.csproj", "{F4B4BDB5-82BC-4BA7-AEE0-72BFC32E6FC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prachka.Api", "Prachka.Api\Prachka.Api.csproj", "{F4B4BDB5-82BC-4BA7-AEE0-72BFC32E6FC7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prachka.Data", "Himchistka.Data\Prachka.Data.csproj", "{01C40864-87F1-41F8-8325-A3483C5685D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prachka.Data", "Prachka.Data\Prachka.Data.csproj", "{01C40864-87F1-41F8-8325-A3483C5685D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prachka.Services", "Himchistka.Services\Prachka.Services.csproj", "{FB4DF348-BDFB-46C4-84B1-23B29F569508}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prachka.Services", "Prachka.Services\Prachka.Services.csproj", "{FB4DF348-BDFB-46C4-84B1-23B29F569508}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -24,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Himchistka.Data\Prachka.Data.csproj" />
-    <ProjectReference Include="..\Himchistka.Services\Prachka.Services.csproj" />
+    <ProjectReference Include="..\Prachka.Data\Prachka.Data.csproj" />
+    <ProjectReference Include="..\Prachka.Services\Prachka.Services.csproj" />
   </ItemGroup>
 
 </Project>
