@@ -26,7 +26,7 @@
                    </v-card-text>
                    <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn color="primary" to="/orders" @click="submit">Войти</v-btn>
+                      <v-btn color="primary" @click="submit">Войти</v-btn>
                    </v-card-actions>
                 </v-card>
              </v-flex>

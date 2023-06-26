@@ -3,6 +3,8 @@ using Himchistka.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Prachka.Api.DTO;
+using Prachka.Services.DTO;
 
 namespace Himchistka.Api.Controllers
 {
@@ -45,6 +47,14 @@ namespace Himchistka.Api.Controllers
         public IActionResult DeleteClients([FromRoute] Guid ClientId)
         {
             _clientService.DeleteClient(ClientId);
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost("SendMessages")]
+        public IActionResult SendMessages([FromBody] DTOMessages model)
+        {
+            _clientService.SendMessages(model);
             return Ok();
         }
     }

@@ -16,7 +16,6 @@
                     loading-text="Загрузка данных"
                     :items-per-page="15"
                     class="elevation-1"
-                    @click:row="openClientCards"
                     :search="search"
                     :custom-filter="customFilter"
                     >
@@ -45,8 +44,29 @@
                                         ></v-text-field>
                                 </v-flex>
                             </v-toolbar>
-                        </template>
-                        <template v-slot:item.status="{item}" max-width="200">
+                    </template>
+                    
+                    <template v-slot:item.firstName="{item}">
+                        <td @click="openClientCards(item)">
+                        {{ item.firstName }}
+                        </td>
+                    </template>
+                    <template v-slot:item.lastName="{item}">
+                        <td @click="openClientCards(item)">
+                        {{ item.lastName }}
+                        </td>
+                    </template>
+                    <template v-slot:item.email="{item}">
+                        <td @click="openClientCards(item)">
+                        {{ item.email }}
+                        </td>
+                    </template>
+                    <template v-slot:item.phoneNumber="{item}">
+                        <td @click="openClientCards(item)">
+                        {{ item.phoneNumber }}
+                        </td>
+                    </template>
+                    <template v-slot:item.status="{item}" max-width="200">
                             <v-select
                                 v-model="item.status"
                                 :items="statuses"
@@ -56,8 +76,8 @@
                                 @change="statusChange(item)"
                             >
                             </v-select>
-                        </template>
-                        <template v-slot:item.actions="{ item }" @click="true">
+                    </template>
+                    <template v-slot:item.actions="{ item }" @click="true">
                             <v-icon
                                 class="mr-2"
                                 @click="editItem(item), addForm = false"
@@ -75,7 +95,7 @@
                             >
                                 mdi-email
                             </v-icon>
-                            </template>
+                    </template>
                     </v-data-table>
                 </v-flex>
             </v-layout>
@@ -131,6 +151,7 @@
                                 v-model="clientForm.birthday"
                                 color="primary"
                                 locale="ru-ru"
+                                no-title
                                 :first-day-of-week="0"
                             ></v-date-picker>
                         </v-form>
@@ -251,7 +272,6 @@
                                        label="Получатели"
                                        item-value="id"
                                        multiple
-                                       @change="singleMail"
                                        >
                                        <template slot="item" slot-scope="data">
                                         {{ data.item.lastName }} ({{ data.item.email }})
@@ -274,8 +294,12 @@
 
                         </v-textarea>
                     </v-container>
-                        
                 </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="sendMessages">Отправить</v-btn>
+                    <v-spacer></v-spacer>
+                </v-card-actions>
             </v-card>
         </v-dialog>
         
@@ -421,11 +445,13 @@
     },
     editItem(item){
         console.log(item)
-        this.form.name = item.name
-        this.form.unitName = item.unitName
-        this.form.price= item.price
-        this.form.id = item.id
-        this.ItemDialog = true
+            this.clientForm.firstName = item.firstName
+            this.clientForm.lastName = item.lastName
+            this.clientForm.email = item.email
+            this.clientForm.phoneNumber = item.phoneNumber
+            this.clientForm.birthday =  item.birthday
+            this.newClientForm = true
+
     },
     deleteItem(item){
         this.deleteItemId = item.id
@@ -500,6 +526,12 @@
         axios.post(`http://localhost:8000/api/Orders/ChangeStatus?orderId=${item.id}&statusId=${item.status}`)
         .then(res => {
             this.getItems();
+        })
+    },
+    sendMessages(){
+        axios.post(`http://localhost:8000/api/Client/SendMessages`, this.mailForm)
+        .then(res => {
+            this.emailDialog = false
         })
     },
     openClientCards(item){

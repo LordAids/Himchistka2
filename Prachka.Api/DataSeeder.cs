@@ -24,13 +24,13 @@ namespace Himchistka.Api
 
         public static async Task SeedSadmin(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
-            if (userManager.FindByNameAsync("sadmin").Result == null)
+            if (userManager.FindByNameAsync("admin").Result == null)
             {
 
                 ApplicationUser user = new ApplicationUser
                 {
-                    UserName = "sadmin",
-                    Email = "ktakida@bk.ru",
+                    UserName = "admin",
+                    Email = "prachka.prachka@yandex.ru",
                     FullName = "Админ Админович"
                 };
                 IdentityResult result = userManager.CreateAsync(user, "superpassword123!").Result; 

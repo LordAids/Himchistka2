@@ -16,7 +16,6 @@
                     loading-text="Загрузка данных"
                     :items-per-page="15"
                     class="elevation-1"
-                    @click:row="openOrderCard"
                     >
                     <template v-slot:top>
                             <v-toolbar flat max-width="600px">
@@ -43,7 +42,30 @@
                                 </v-flex>
                                 
                             </v-toolbar>
-                        </template>
+                    </template>
+                    
+                    <!-- <template slot="items" slot-scope="props">
+                        <tr @click:row="openOrderCard(item)">
+                            <td>{{ item.clientName }}</td>
+                            <td>{{ item.comment }}22</td>
+                            <td>{{ item.cost }}</td>
+                        </tr>
+                    </template> -->
+                    <template v-slot:item.clientName="{item}">
+                        <td @click="openOrderCard(item)">
+                        {{ item.clientName }}
+                        </td>
+                    </template>
+                    <template v-slot:item.comment="{item}" >
+                        <td @click="openOrderCard(item)">
+                        {{ item.clientName }}
+                        </td>
+                    </template>
+                    <template v-slot:item.cost="{item}" >
+                        <td @click="openOrderCard(item)">
+                        {{ item.cost }}
+                        </td>
+                    </template>
                         <template v-slot:item.status="{item}" max-width="200">
                             <v-select
                                 v-model="item.status"

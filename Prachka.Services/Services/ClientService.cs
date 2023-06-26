@@ -5,6 +5,7 @@ using Himchistka.Services.DTO;
 using Himchistka.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Prachka.Services.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,6 +77,18 @@ namespace Himchistka.Services.Services
             catch (Exception ex)
             {
                 throw new Exception();
+            }
+        }
+
+        public async Task SendMessages(DTOMessages model)
+        {
+            var clients = _context.Clients.Where(c => model.ClientIds.Contains(c.Id)).ToList();
+
+            var mailService = new MailService();
+
+            foreach (var client in clients)
+            {
+                await mailService.SendEmailAsync(client.Email, model.Subject, model.Text);
             }
         }
     }

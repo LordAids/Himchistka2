@@ -72,10 +72,10 @@
                                   Суммарное количество заказов: {{ totalOrders }}
                                 </div>
                                 <div>
-                                  Суммарная прибыль: {{ totalProfit }} рублей
+                                  Суммарная прибыль: {{ totalProfit.toFixed(2) }} рублей
                                 </div>
                                 <div>
-                                  Суммарные затраты: {{ totalSpending }} рублей
+                                  Суммарные затраты: {{  totalSpending.toFixed(2) }} рублей
                                 </div>
                               <Bar 
                                     :chart-options="chartOptions"

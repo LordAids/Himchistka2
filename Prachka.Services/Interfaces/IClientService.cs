@@ -1,4 +1,5 @@
 ﻿using Himchistka.Services.DTO;
+using Prachka.Services.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace Himchistka.Services.Interfaces
         public Task<IList<DTOClient>> GetAllClients();
         public Task<DTOClient> GetClientById(Guid orderId);
         public Task DeleteClient(Guid orderId);
+        public Task SendMessages(DTOMessages model);
     }
 }
